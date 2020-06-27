@@ -20,7 +20,8 @@ reboot
 
 
 zypper refresh
-transactional-update up patch pkg in --download-in-advance glibc-devel glibc-devel-static glibc-extra glibc-utils texlive autoconf autoconf213 automake libtool pkg-config cmake doxygen asciidoc ant ant-contrib ant-scripts libxslt-devel libxslt-tools xalan-j2-xsltc libxslt1 libxslt-tools libxslt-python java-11-openjdk-devel wget wget-lang freetype freetype-devel freetype-tools libfreetype6 libwmf-devel libwmf-tools libwmf-0_2-7 lcms2 liblcms2-devel liblcms2-doc libxml2-devel libxml2-tools perl-XML-LibXML python3-libxml2-python libyaml-devel libyaml-0-2 libpng16-devel libpng16-tools libtiff-devel libtiff5 libopenjp2-7 libopenjpeg1 libgif7 zlib-devel zlibrary-data zlibrary-devel libicu-devel libpango-1_0-0 libpangomm-2_44-1 libcairo2 libcairo-script-interpreter2 libcairo-gobject2 mozilla-nss mozilla-nss-certs mozilla-nss-devel mozilla-nss-sysinit mozilla-nss-tools pandoc MultiMarkdown-6 cmark discount pandoc texlive-context wkhtmltopdf maven maven-lib maven-local maven-shared gradle gradle-local javapackages-gradle mtree tree xclip vsftpd zsh
+transactional-update up patch pkg in --download-in-advance glibc-devel glibc-devel-static glibc-extra glibc-utils texlive autoconf autoconf213 automake libtool pkg-config cmake doxygen asciidoc ant ant-contrib ant-scripts libxslt-devel libxslt-tools xalan-j2-xsltc libxslt1 libxslt-tools libxslt-python java-11-openjdk-devel wget wget-lang freetype freetype-devel freetype-tools libfreetype6 libwmf-devel libwmf-tools libwmf-0_2-7 lcms2 liblcms2-devel liblcms2-doc libxml2-devel libxml2-tools perl-XML-LibXML python3-libxml2-python libyaml-devel libyaml-0-2 libpng16-devel libpng16-tools libtiff-devel libtiff5 libopenjp2-7 libopenjpeg1 libgif7 zlib-devel zlibrary-data zlibrary-devel libicu-devel libpango-1_0-0 libpangomm-2_44-1 libcairo2 libcairo-script-interpreter2 libcairo-gobject2 mozilla-nss mozilla-nss-certs mozilla-nss-devel mozilla-nss-sysinit mozilla-nss-tools pandoc MultiMarkdown-6 cmark discount pandoc texlive-context wkhtmltopdf maven maven-lib maven-local maven-shared gradle gradle-local javapackages-gradle mtree tree xclip vsftpd zsh cairo-devel cairo-tools libcairo2 openjpeg2 openjpeg2-devel cmake-full
+
 ldconfig
 reboot
 
@@ -54,7 +55,7 @@ chroot_list_file=/etc/vsftpd.chroot_list
 
 ```zsh
 vi /etc/vsftpd.chroot_list
-<user>
+# add users
 ```
 
 #####Add ports
@@ -67,6 +68,8 @@ firewall-cmd --reload
 ```
 
 #####Start server
+
+Done by **root**
 
 ```zsh
 # Starts ftp server
@@ -86,7 +89,7 @@ sudo vi /etc/passwd #make edits to change any /bin/bash to /bin/zsh
 
 ### Set up .zshrc
 
-This is done as user or else it will be saved under \$HOME for **root** and not **user**
+This is done as user or else it will be saved under **\$HOME** for **root** and not **user**
 
 ```zsh
 vi ~/.zshrc #enter .zshrc with vim to edit (can also use emacs or nano as desired)
@@ -98,7 +101,7 @@ export C_INCLUDE_PATH=$HOME/.local/include
 export CPLUS_INCLUDE_PATH=$HOME/.local/include
 export LIBRARY_PATH=$HOME/.local/lib
 export PKG_CONFIG_PATH=$HOME/.local/lib/pkgconfig:$HOME/.local/lib64/pkgconfig
-export LD_LIBRARY_PATH=$HOME/.local/lib: $HOME/.local/lib64 #crude/blunt force method
+export LD_LIBRARY_PATH=$HOME/.local/lib: $HOME/.local/lib64
 export MANPATH=$HOME/.local/share/man:$(manpath)
 ###################################
 # Configurations for zsh
@@ -167,7 +170,7 @@ cd $HOME
 ls -la
 ```
 
-IF (and only IF) NO, then ask root to give permissions
+IF (and only IF) NO, then ask **root** to give permissions
 
 ```zsh
 chown -R <user> /home/<user>
@@ -175,10 +178,10 @@ chown -R <user> /home/<user>
 
 **Step 2:** Done as **user**
 
-Set up basic directories in \$HOME/.local
+Set up basic directories in **\$HOME/.local**
 
 ```zsh
-mkdir -p ~/.local/{bin,share/man,include,lib/pkgconfig,lib64,src,games,src}
+mkdir -p ~/.local/{bin,share/man,include,lib/pkgconfig,lib64/pkgconfig,src}
 ```
 
 ####Environmental Variables for \$HOME/.local install (in \$HOME/.zshrc)
@@ -191,42 +194,5 @@ export LIBRARY_PATH=$HOME/.local/lib
 export PKG_CONFIG_PATH=$HOME/.local/lib/pkgconfig
 export LD_LIBRARY_PATH=$HOME/.local/lib #crude/blunt force method
 export MANPATH=$HOME/.local/share/man:$(manpath)
-```
-
-#### Compile and Install patterns for \$HOME/.local
-
-##### Autoconf and ./configure
-
-```zsh
-git clone --depth 1 git@github.com:<user>/<repo>
-cd <repo>
-sh ./autogen.sh
-# The prefix command is what makes this work Typically this installs to /usr/local by default, we are changing that behavior to avoid su or sudo-ing
-./configure --prefix $HOME/.local
-make 
-make install
-# Have root run ldconfig -v /$HOME/.local/lib
-```
-
-##### CMAKE
-
-```zsh
-cd <program>
-mkdir build
-cd <build>
-cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/.local 
-make
-make install
-# Have root run ldconfig -v /$HOME/.local/lib
-```
-
-##### Standalone Binaries
-
-```zsh
-tar xzf name-version.tar.gz
-cd name-version/
-make
-cp <repo> $HOME/.local/bin
-# Have root run ldconfig -v /$HOME/.local/lib
 ```
 

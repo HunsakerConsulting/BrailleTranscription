@@ -1,93 +1,3 @@
-#### Install Liblouis, then install Liblouisutdml from source
-
-```zsh
-git clone --depth 1 git@github.com:liblouis/liblouis.git
-cd liblouis
-sh ./autogen.sh
-./configure --prefix $HOME/.local
-make 
-make install
-ldconfig -v /$HOME/local/lib
-cd
-
-git clone --depth 1 git@github.com:liblouis/liblouisutdml.git
-cd liblouisutdml
-sh ./autogen.sh
-./configure --prefix $HOME/.local
-make 
-make install 
-sudo ldconfig -v /$HOME/local/lib
-cd
- 
-```
-
-#### Install Ghostscript, Poppler,  and ImageMagick-7 from Source
-
-```zsh
-#Ghostscript from Repository compiles with autogen and gnu make
-git clone git://git.ghostscript.com/ghostpdl.git
-sh autogen.sh
-./configure --enable-debug --prefix $HOME/.local
-make && make install
-sudo ldconfig $HOME/.local/lib
-cd
-
-#Poppler compiles with CMAKE
-git clone https://anongit.freedesktop.org/git/poppler/poppler.git
-mkdir build
-cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=/home/mrhunsaker/.local -DCMAKE_BUILD_TYPE=release
-make
-make install
-
-#Image-Magick 7 from Repository compiles with gnu make
-git clone --depth 1 https://github.com/ImageMagick/ImageMagick.git
-cd ./ImageMagick
-./configure --prefix $HOME/.local --with-modules --enable-shared --with-perl --with-gslib --with-gs-font-dir 
-make 
-make install
-sudo ldconfig -v $HOME/.local/lib
-cd
-```
-
-#### Install Leptonica, then install Tesseract-OCR from source
-
-```zsh
-#Clone Leptonica Git Repository
-cd
-git clone --depth 1 https://github.com/DanBloomberg/leptonica.git
-cd /leptonica
-sh ./autogen.sh
-./configure --enable-debug --prefix $HOME/.local
-make && make install
-sudo ldconfig $HOME/.local/lib
-cd
-
-#Clone Tesseract Git Repository to penultimate update
-git clone --depth 1 https://github.com/tesseract-ocr/tesseract.git
-cd tesseract
-sh ./autogen.sh
-./configure --enable-debug --prefix $HOME/.local
-LDFLAGS="-L/$HOME/.local/lib" CFLAGS="-I/$HOME/.local/include" make && make install
-sudo ldconfig -v $HOME/.local/lib
-
-cd /home/mrhunsaker/.local/share/tessdata
-wget https://github.com/tesseract-ocr/tessdata_best/blob/master/eng.traineddata\?raw=true 
-ln -s /home/mrhunsaker/.local/share/tessdata/eng.traineddata?raw=true /home/mrhunsaker/.local/share/tessdata/eng.traineddata
-
-sudo wget https://github.com/tesseract-ocr/tessdata_best/blob/master/fra.traineddata\?raw=true 
-sudo ln -s /home/mrhunsaker/.local/share/tessdata/fra.traineddata?raw=true /home/mrhunsaker/.local/share/tessdata/fra.traineddata
-
-wget https://github.com/tesseract-ocr/tessdata_best/blob/master/deu.traineddata\?raw=true 
-sudo ln -s /home/mrhunsaker/.local/share/tessdata/deu.traineddata?raw=true /home/mrhunsaker/.local/share/tessdata/deu.traineddata
-
-cd 
-cd tesseract
-make training
-make training-install 
-sudo ldconfig -v $HOME/.local/lib
-```
-
 ## Performing OCR on Low-Quality or Scanned PDF files
 
 #### Use sed to Remove Spaces from Filenames
@@ -121,7 +31,7 @@ touch $HOME/workdir/$PROJECT/NOTES.txt
 touch $HOME/workdir/$PROJECT/README.md
 touch $HOME/workdir/$PROJECT/derivatives/$FILENAME/Updates.txt
 cp ${i} /home/mrhunsaker/workdir/$PROJECT/source/$FILENAME/
-echo -e `date` '\n Created working directories and copied in source files' | tee -a $HOME/workdir/$PROJECT/derivatives/$FILENAME/Updates.txt
+echo -e `date` '\n Created working directories and copied in source files\n' | tee -a $HOME/workdir/$PROJECT/derivatives/$FILENAME/Updates.txt
 done
 ```
 #### Optimize PDF files with Ghostwriter
@@ -152,7 +62,7 @@ FILENAME=`echo $i:t:r`
 FILEPATH=`echo $i:h`
 HOMEBASE=`echo $i | /bin/awk -F / '{print $7}'`
 gs -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile=/home/mrhunsaker/workdir/$TASK/derivatives/$HOMEBASE/pdfconversion/pdftotiff/ghostscript/"$FILENAME"_%04d.pdf ${i}
-echo -e `date` '\n Separated PDF into multiple files with Ghostscript' | tee -a $HOME/workdir/$TASK/derivatives/$FILENAME/Updates.txt
+echo -e `date` '\n Separated PDF into multiple files with Ghostscript\n' | tee -a $HOME/workdir/$TASK/derivatives/$FILENAME/Updates.txt
 done
 ```
 
@@ -165,7 +75,7 @@ FILENAME=`echo $i:t:r`
 FILEPATH=`echo $i:h`
 HOMEBASE=`echo $i | /bin/awk -F / '{print $7}'`
 pdfseparate ${i} /home/mrhunsaker/workdir/nextsteps/derivatives/$HOMEBASE/pdfconversion/pdftotiff/poppler/"$FILENAME"_%04d.pdf
-echo -e `date` '\n Separated PDF into multiple files with Poppler' | tee -a $HOME/workdir/$TASK/derivatives/$FILENAME/Updates.txt
+echo -e `date` '\n Separated PDF into multiple files with Poppler\n' | tee -a $HOME/workdir/$TASK/derivatives/$FILENAME/Updates.txt
 done
 ```
 
@@ -183,15 +93,15 @@ TASK=nextsteps
 WORK=/home/mrhunsaker/workdir/$TASK/derivatives
 for i in $WORK/*/pdfconversion/pdftotiff/$PREVIOUS/*.pdf; do
 pdftocairo -tiff -r 1024 -gray -antialias best $i $WORK/$HOMEBASE/pdfconversion/tiffprocessing/cairo/"$FILENAME"
-echo -e `date` '\n Converted PDF into TIF files with Poppler' | sudo tee -a $HOME/workdir/$TASK/derivatives/$FILENAME/Updates.txt
+echo -e `date` '\n Converted PDF into TIF files with Poppler\n' | sudo tee -a $HOME/workdir/$TASK/derivatives/$FILENAME/Updates.txt
 magick $WORK/$HOMEBASE/pdfconversion/tiffprocessing/cairo/*.tif -quality 100% -depth 8 strip -bordercolor white -border 2 -background white -alpha remove -alpha off -resize 25% $WORK/$HOMEBASE/imagepreparation/poppler/optimized/"$FILENAME".tiff
-echo -e `date` '\n Optimized TIF into TIFF files with ImageMagick' | sudo tee -a $HOME/workdir/$TASK/derivatives/$HOMEBASE/Updates.txt
+echo -e `date` '\n Optimized TIF into TIFF files with ImageMagick\n' | sudo tee -a $HOME/workdir/$TASK/derivatives/$HOMEBASE/Updates.txt
 done
 ```
 
-
-
 #####ImageMagick
+
+It is imperative that files be visually scanned at this point to verify that any text is legible. Otherwise this needs to be rerun with a higher density and/or a less aggressive "resize"
 
 ```zsh
 PREVIOUS=poppler
@@ -201,15 +111,92 @@ for i in $WORK/*/pdfconversion/pdftotiff/$PREVIOUS/*.pdf; do
 HOMEBASE=`echo $i | /bin/awk -F / '{print $7}'`
 FILENAME=`echo $i:t:r`
 FILEPATH=`echo $i:h`
-magick $i -density 1500 -despeckle -quality 100% -depth 8 -strip  -background white -alpha remove -alpha off +repage -resize 50% $WORK/$HOMEBASE/pdfconversion/tiffprocessing/magick/"$FILENAME".tiff
-echo -e `date` '\n Converted PDF into optimized TIFF files with ImageMagick' | tee -a $HOME/workdir/$TASK/derivatives/$HOMEBASE/Updates.txt
+magick $i -density 1500 -despeckle -quality 100% -depth 8 -strip  -background white -alpha remove -alpha off -resize 50% $WORK/$HOMEBASE/pdfconversion/tiffprocessing/magick/"$FILENAME".tiff
+echo -e `date` '\n Converted PDF into optimized TIFF files with ImageMagick\n' | tee -a $HOME/workdir/$TASK/derivatives/$HOMEBASE/Updates.txt
 done
 ```
 
-####Image Refinement with Python and OpenCV
+####Image Refinement with Python and OpenCV (NEED TO TWEAK AND TROUBLESHOOT)
 
 ```
+gray = get_grayscale(image)
+thresh = thresholding(gray)
+opening = opening(gray)
+canny = canny(gray)
+images = {'gray': gray, 
+          'thresh': thresh, 
+          'opening': opening, 
+          'canny': canny}
+          
+import cv2
+import numpy as np
 
+img = cv2.imread('image.jpg')
+
+# get grayscale image
+def get_grayscale(image):
+    return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    
+# noise removal
+def remove_noise(image):
+    return cv2.medianBlur(image,5)
+ 
+#thresholding
+def thresholding(image):
+    # threshold the image, setting all foreground pixels to
+    # 255 and all background pixels to 0
+    return cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
+
+#dilation
+def dilate(image):
+    kernel = np.ones((5,5),np.uint8)
+    return cv2.dilate(image, kernel, iterations = 1)
+    
+#erosion
+def erode(image):
+    kernel = np.ones((5,5),np.uint8)
+    return cv2.erode(image, kernel, iterations = 1)
+
+#opening - erosion followed by dilation
+def opening(image):
+    kernel = np.ones((5,5),np.uint8)
+    return cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel)
+
+#canny edge detection
+def canny(image):
+    return cv2.Canny(image, 100, 200)
+
+#skew correction
+def deskew(image):
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    gray = cv2.bitwise_not(gray)
+    thresh = cv2.threshold(gray, 0, 255,
+        cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
+    coords = np.column_stack(np.where(thresh > 0))
+    angle = cv2.minAreaRect(coords)[-1]
+    if angle < -45:
+        angle = -(90 + angle)
+    else:
+        angle = -angle
+    (h, w) = image.shape[:2]
+    center = (w // 2, h // 2)
+    M = cv2.getRotationMatrix2D(center, angle, 1.0)
+    rotated = cv2.warpAffine(image, M, (w, h),
+        flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE)    
+    return rotated
+
+#template matching
+def match_template(image, template):
+    return cv2.matchTemplate(image, template, cv2.TM_CCOEFF_NORMED)           
+   
+   deskew = deskew(image)
+gray = get_grayscale(deskew)
+thresh = thresholding(gray)
+rnoise = remove_noise(gray)
+dilate = dilate(gray)
+erode = erode(gray)
+opening = opening(gray)
+canny = canny(gray)
 ```
 
 #### Use Tesseract-OCR and Leptonica to perform Optical Character Recognition
@@ -385,15 +372,4 @@ canny = canny(gray)
 
 ```
 
-
-
-```
-sudo chown -R mrhunsaker:nogroup /home/mrhunsaker/
-```
-
-```
-mrhunsaker@/home/mrhunsaker % sudo vi /etc/vsftpd.conf
-mrhunsaker@/home/mrhunsaker % sudo systemctl start vsftpd
-mrhunsaker@/home/mrhunsaker % sudo systemctl status vsftpd
-```
 
