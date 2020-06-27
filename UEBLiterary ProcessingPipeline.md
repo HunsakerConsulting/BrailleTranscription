@@ -1,4 +1,6 @@
-### Process .txt to /xml files
+## UEB Literary Braille Transcription
+
+#### Process .txt to /xml files
 
 #### Increment Page Numbers
 

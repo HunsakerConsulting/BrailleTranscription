@@ -1,4 +1,4 @@
-## Performing OCR on Low-Quality or Scanned PDF files
+## Technical Braille Pre-Processing 
 
 #### Use sed to Remove Spaces from Filenames
 
@@ -79,29 +79,23 @@ echo -e `date` '\n Separated PDF into multiple files with Poppler\n' | tee -a $H
 done
 ```
 
-#### Use pdftocairo in Poppler  or Image Magick 7 to copnvert pdf to tiff files 
+#### Use pdftocairo in Poppler  or Image Magick 7 to copnvert pdf to svg files 
 
-Poppler pdftocairo will make ~90MB .tif files. These files are reduced in physical size by ImageMagick 7. The \**/\* searches recursively through the subdirectories and the (.) is a glob operator that tells zsh to search for files (same function as the  -f flag in find when using find within a bash shell)
+The \**/\* searches recursively through the subdirectories and the (.) is a glob operator that tells zsh to search for files (same function as the  -f flag in find when using find within a bash shell)
 
 #####Poppler + ImageMagick
-
-There is an optimization step after Poppler to reduce ~90MB TIF files into 3.5MB TIFF files using ImageMagick
 
 ```zsh
 PREVIOUS=poppler
 TASK=nextsteps
 WORK=/home/mrhunsaker/workdir/$TASK/derivatives
 for i in $WORK/*/pdfconversion/pdftotiff/$PREVIOUS/*.pdf; do
-pdftocairo -tiff -r 1024 -gray -antialias best $i $WORK/$HOMEBASE/pdfconversion/tiffprocessing/cairo/"$FILENAME"
-echo -e `date` '\n Converted PDF into TIF files with Poppler\n' | sudo tee -a $HOME/workdir/$TASK/derivatives/$FILENAME/Updates.txt
-magick $WORK/$HOMEBASE/pdfconversion/tiffprocessing/cairo/*.tif -quality 100% -depth 8 strip -bordercolor white -border 2 -background white -alpha remove -alpha off -resize 25% $WORK/$HOMEBASE/imagepreparation/poppler/optimized/"$FILENAME".tiff
-echo -e `date` '\n Optimized TIF into TIFF files with ImageMagick\n' | sudo tee -a $HOME/workdir/$TASK/derivatives/$HOMEBASE/Updates.txt
+pdftocairo -svg -paper match -r 1024 -nocrop -noshrink -expand -v -antialias best $i $WORK/$HOMEBASE/pdfconversion/tiffprocessing/cairo/"$FILENAME"
+echo -e `date` '\n Converted PDF into SVG files with Poppler\n' | sudo tee -a $HOME/workdir/$TASK/derivatives/$FILENAME/Updates.txt
 done
 ```
 
 #####ImageMagick
-
-It is imperative that files be visually scanned at this point to verify that any text is legible. Otherwise this needs to be rerun with a higher density and/or a less aggressive "resize"
 
 ```zsh
 PREVIOUS=poppler
@@ -111,7 +105,7 @@ for i in $WORK/*/pdfconversion/pdftotiff/$PREVIOUS/*.pdf; do
 HOMEBASE=`echo $i | /bin/awk -F / '{print $7}'`
 FILENAME=`echo $i:t:r`
 FILEPATH=`echo $i:h`
-magick $i -density 1500 -despeckle -quality 100% -depth 8 -strip  -background white -alpha remove -alpha off -resize 50% $WORK/$HOMEBASE/pdfconversion/tiffprocessing/magick/"$FILENAME".tiff
+magick $i -density 1500 -despeckle -quality 100% -depth 8 -strip  -background white -alpha remove -alpha off -resize 50% $WORK/$HOMEBASE/pdfconversion/tiffprocessing/magick/"$FILENAME".svg
 echo -e `date` '\n Converted PDF into optimized TIFF files with ImageMagick\n' | tee -a $HOME/workdir/$TASK/derivatives/$HOMEBASE/Updates.txt
 done
 ```
