@@ -20,11 +20,10 @@ reboot
 
 
 zypper refresh
-transactional-update up patch pkg in --download-in-advance glibc-devel glibc-devel-static glibc-extra glibc-utils texlive autoconf autoconf213 automake libtool pkg-config cmake doxygen asciidoc ant ant-contrib ant-scripts libxslt-devel libxslt-tools xalan-j2-xsltc libxslt1 libxslt-tools libxslt-python java-11-openjdk-devel wget wget-lang freetype freetype-devel freetype-tools libfreetype6 libwmf-devel libwmf-tools libwmf-0_2-7 lcms2 liblcms2-devel liblcms2-doc libxml2-devel libxml2-tools perl-XML-LibXML python3-libxml2-python libyaml-devel libyaml-0-2 libpng16-devel libpng16-tools libtiff-devel libtiff5 libopenjp2-7 libopenjpeg1 libgif7 zlib-devel zlibrary-data zlibrary-devel libicu-devel libpango-1_0-0 libpangomm-2_44-1 libcairo2 libcairo-script-interpreter2 libcairo-gobject2 mozilla-nss mozilla-nss-certs mozilla-nss-devel mozilla-nss-sysinit mozilla-nss-tools pandoc MultiMarkdown-6 cmark discount pandoc texlive-context wkhtmltopdf maven maven-lib maven-local maven-shared gradle gradle-local javapackages-gradle mtree tree xclip vsftpd zsh cairo-devel cairo-tools libcairo2 openjpeg2 openjpeg2-devel cmake-full
+transactional-update --continue pkg in --download-in-advance glibc-devel glibc-devel-static glibc-extra glibc-utils texlive autoconf autoconf213 automake libtool pkg-config cmake doxygen asciidoc ant ant-contrib ant-scripts libxslt-devel libxslt-tools xalan-j2-xsltc libxslt1 libxslt-tools libxslt-python java-11-openjdk-devel wget wget-lang freetype freetype-devel freetype-tools libfreetype6 libwmf-devel libwmf-tools libwmf-0_2-7 lcms2 liblcms2-devel liblcms2-doc libxml2-devel libxml2-tools perl-XML-LibXML python3-libxml2-python libyaml-devel libyaml-0-2 libpng16-devel libpng16-tools libtiff-devel libtiff5 libopenjp2-7 libopenjpeg1 libgif7 zlib-devel zlibrary-data zlibrary-devel libicu-devel libpango-1_0-0 libpangomm-2_44-1 libcairo2 libcairo-script-interpreter2 libcairo-gobject2 mozilla-nss mozilla-nss-certs mozilla-nss-devel mozilla-nss-sysinit mozilla-nss-tools pandoc MultiMarkdown-6 cmark discount pandoc texlive-context wkhtmltopdf maven maven-lib maven-local maven-shared gradle gradle-local javapackages-gradle mtree tree xclip vsftpd zsh cairo-devel cairo-tools libcairo2 openjpeg2 openjpeg2-devel cmake-full
 
 ldconfig
 reboot
-
 ```
 
 ####Set up ftp
@@ -84,7 +83,8 @@ This is still done by **root**
 
 ```zsh
 chsh -s $(which zsh)
-sudo vi /etc/passwd #make edits to change any /bin/bash to /bin/zsh
+# make edits to change any /bin/bash to /bin/zsh
+sudo vi /etc/passwd 
 ```
 
 ### Set up .zshrc
@@ -99,10 +99,11 @@ vi ~/.zshrc #enter .zshrc with vim to edit (can also use emacs or nano as desire
 export PATH=$HOME/.local/bin:$PATH
 export C_INCLUDE_PATH=$HOME/.local/include
 export CPLUS_INCLUDE_PATH=$HOME/.local/include
-export LIBRARY_PATH=$HOME/.local/lib
+export LIBRARY_PATH=$HOME/.local/lib:$HOME/.local/lib64
 export PKG_CONFIG_PATH=$HOME/.local/lib/pkgconfig:$HOME/.local/lib64/pkgconfig
-export LD_LIBRARY_PATH=$HOME/.local/lib: $HOME/.local/lib64
+export LD_LIBRARY_PATH=$HOME/.local/lib:$HOME/.local/lib64
 export MANPATH=$HOME/.local/share/man:$(manpath)
+
 ###################################
 # Configurations for zsh
 ###################################
@@ -155,7 +156,7 @@ git config --global user.email "hunsakerconsulting@gmail.com"
 ssh-keygen -t rsa -b 4096 -C "hunsakerconsulting@gmail.com"
 eval "$(ssh-agent -s)"
 ssh-add $HOME/.ssh/id_rsa
-xclip -sel clip < $HOME/.ssh/id_rsa.p
+xclip -sel clip < $HOME/.ssh/id_rsa.pub
 #paste this into GitHub under Settings > SSH and GPG Keys
 ```
 
