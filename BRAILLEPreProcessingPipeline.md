@@ -8,52 +8,40 @@ If at all possible, a dash or deleting a space is preferred to an underscore
 
 ```zsh
 for oldname in *; do
-
 # To Delete Spaces in Filename
-  newname=`echo $oldname | sed -e 's/ //g'`
-  
+newname=`echo $oldname | sed -e 's/ //g'`
 # To Replace Spaces in Filename with a dash
 #  newname=`echo $oldname | sed -e 's/ /-/g'`
-
 # To Replace Spaces in Filename with an underscore
 #  newname=`echo $oldname | sed -e 's/ /_/g'`
-
-  mv "$oldname" "$newname"
+mv "$oldname" "$newname"
 done
 ```
 
 #### Import PDF file/Create Project Folders and Files
 
-```zsh
-for i in $HOME/braille/staging/**/*.pdf(.); do
+``` zsh
 
+for i in $HOME/braille/staging/ueb*/**/*.pdf(.); do
 TYPE=`echo $i | /bin/awk -F / '{print $6}'`
 FILENAME=`echo $i:t:r`
 FILEPATH=`echo $i:h`
 PROJECT=`echo ${${FILEPATH%/}##*/}`
-
 mkdir -p $HOME/braille/transcribe/$TYPE/workdir/$PROJECT/{source/$FILENAME/,derivatives/$FILENAME/{pdfsvg/{poppler,magick},pdfcompression,imagepreparation/{magick,opencv,python},ocr/{poppler/{html,txt,xml},pytesseract/txt,tesseractocr/{hocr,pdf,txt}},pdfconversion/{pdfpaginate/{ghostscript,cairo},pdftotiff/{cairo/optimized,magick,python}},textprocessing/{nimas,pretext,text,xhtml,xml},uebtranscription/{liblouisutdml,pretext}},scripts,finaltranscription/$FILENAME}
-
-touch $HOME/transcribe/$TYPE/workdir/$PROJECT/NOTES.txt
-
-touch $HOME/transcribe/$TYPE/workdir/$PROJECT/README.md
-
-touch $HOME/transcribe/$TYPE/workdir/$PROJECT/derivatives/$FILENAME/Updates.txt
-
-cp ${i} $HOME/transcribe/$TYPE/workdir/$PROJECT/source/$FILENAME/
-
-echo -e `date` '\n Created working directories and copied in source files\n' | tee -a $HOME/transcribe/$TYPE/workdir/$PROJECT/derivatives/$FILENAME/Updates.txt
-
+touch $HOME/braille/transcribe/$TYPE/workdir/$PROJECT/NOTES.txt
+touch $HOME/braille/transcribe/$TYPE/workdir/$PROJECT/README.md
+touch $HOME/braille/transcribe/$TYPE/workdir/$PROJECT/derivatives/$FILENAME/Updates.txt
+cp ${i} $HOME/braille/transcribe/$TYPE/workdir/$PROJECT/source/$FILENAME/
+echo -e `date` '\n Created working directories and copied in source files\n' | tee -a $HOME/braille/transcribe/$TYPE/workdir/$PROJECT/derivatives/$FILENAME/Updates.txt
 done
 
-cd $HOME/braille/transcribe/$TYPE/workdir/$PROJECT/scripts
-git clone git@github
+
 
 ```
 #### Optimize PDF files with Ghostwriter
 
 ``` zsh
-for i in $HOME/transcribe/**/source/**/*.pdf(.); do
+for i in $HOME/braille/transcribe/**/source/**/*.pdf(.); do
 
 TYPE=`echo $i | /bin/awk -F / '{print $6}'`
 TASK=`echo $i | /bin/awk -F / '{print $8}'`
@@ -61,9 +49,9 @@ FILENAME=`echo $i:t:r`
 FILEPATH=`echo $i:h`
 HOMEBASE=`echo $i | /bin/awk -F / '{print $10}'`
 
-gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dBATCH -sOutputFile=$HOME/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/pdfcompression/"$FILENAME".pdf ${i}
+gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dBATCH -sOutputFile=$HOME/braille/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/pdfcompression/"$FILENAME".pdf ${i}
 
-echo -e `date` '\n Optimized PDF files with Ghostscript' | tee -a $HOME/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/Updates.txt
+echo -e `date` '\n Optimized PDF files with Ghostscript' | tee -a $HOME/braille/transcribe/$TYPE/workdir/$TASK/derivatives/$FILENAME/Updates.txt
 done
 ```
 
@@ -76,7 +64,7 @@ This is preferred over a straight pdftocairo output to reduce strain on computer
 #####Ghostwriter Method
 
 ```zsh
-for i in $HOME/transcribe/**/pdfcompression/*.pdf(.); do     
+for i in $HOME/braille/transcribe/**/pdfcompression/*.pdf(.); do     
 
 TYPE=`echo $i | /bin/awk -F / '{print $6}'`
 TASK=`echo $i | /bin/awk -F / '{print $8}'`
@@ -84,25 +72,25 @@ FILENAME=`echo $i:t:r`
 FILEPATH=`echo $i:h`
 HOMEBASE=`echo $i | /bin/awk -F / '{print $10}'`
 
-gs -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile=$HOME/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/pdfconversion/pdftotiff/ghostscript/"$FILENAME"_%04d.pdf ${i}
+gs -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile=$HOME/braille/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/pdfconversion/pdfpaginate/ghostscript/"$FILENAME"_%04d.pdf ${i}
 
-echo -e `date` '\n Separated PDF into multiple files with Ghostscript\n' | tee -a $HOME/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/Updates.txt
+echo -e `date` '\n Separated PDF into multiple files with Ghostscript\n' | tee -a $HOME/braille/transcribe/$TYPE/workdir/$TASK/derivatives/$FILENAME/Updates.txt
 done
 ```
 
 #####Poppler Method
 
 ```zsh
-for i in $HOME/transcribe/**/derivatives/**/pdfcompression/*.pdf(.); do  
+for i in $HOME/braille/transcribe/**/derivatives/**/pdfcompression/*.pdf(.); do  
 TYPE=`echo $i | /bin/awk -F / '{print $6}'`
 TASK=`echo $i | /bin/awk -F / '{print $8}'`
 FILENAME=`echo $i:t:r`
 FILEPATH=`echo $i:h`
 HOMEBASE=`echo $i | /bin/awk -F / '{print $10}'`
 
-pdfseparate ${i} $HOME/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/pdfconversion/pdftotiff/poppler/"$FILENAME"_%04d.pdf
+pdfseparate ${i} $HOME/braille/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/pdfconversion/pdfpaginate/cairo/"$FILENAME"_%04d.pdf
 
-echo -e `date` '\n Separated PDF into multiple files with Poppler\n' | tee -a $HOME/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/Updates.txt
+echo -e `date` '\n Separated PDF into multiple files with Poppler\n' | tee -a $HOME/braille/transcribe/$TYPE/workdir/$TASK/derivatives/$FILENAME/Updates.txt
 done
 ```
 
@@ -115,23 +103,23 @@ Poppler pdftocairo will make ~90MB .tif files. These files are reduced in physic
 There is an optimization step after Poppler to reduce ~90MB TIF files into 3.5MB TIFF files using ImageMagick
 
 ```zsh
-#Previous is ( Poppler | Ghostscript )
-PREVIOUS=
+#Previous is ( cairo | ghostscript )
+PREVIOUS=cairo
 
-for i in $HOME/transcribe/**/derivatives/**/pdfconversion/pdftotiff/$PREVIOUS/*.pdf; do
+for i in $HOME/braille/transcribe/**/derivatives/**/pdfconversion/pdfpaginate/$PREVIOUS/*.pdf(.); do
 TYPE=`echo $i | /bin/awk -F / '{print $6}'`
 TASK=`echo $i | /bin/awk -F / '{print $8}'`
 FILENAME=`echo $i:t:r`
 FILEPATH=`echo $i:h`
 HOMEBASE=`echo $i | /bin/awk -F / '{print $10}'`
 
-pdftocairo -tiff -r 1024 -gray -antialias best $i $HOME/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/pdfconversion/tiffprocessing/cairo/"$FILENAME"
+pdftocairo -tiff -r 1024 -gray -antialias best $i $HOME/braille/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/pdfconversion/pdftotiff/cairo/"$FILENAME"
 
-echo -e `date` '\n Converted PDF into TIF files with Poppler\n' | sudo tee -a $HOME/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/Updates.txt
+echo -e `date` '\n Converted PDF into TIF files with Poppler\n' | sudo tee -a $HOME/braille/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/Updates.txt
 
-magick $HOME/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/pdfconversion/tiffprocessing/cairo/*.tif -quality 100% -depth 8 strip -bordercolor white -border 2 -background white -alpha remove -alpha off -resize 25% $HOME/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/imagepreparation/poppler/optimized/"$FILENAME".tiff
+magick $HOME/braille/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/pdfconversion/pdftotiff/cairo/*.tif -quality 100% -depth 8 -strip -bordercolor white -border 2 -background white -alpha remove -alpha off $HOME/braille/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/pdfconversion/pdftotiff/cairo/optimized/"$FILENAME".tiff
 
-echo -e `date` '\n Optimized TIF into TIFF files with ImageMagick\n' | sudo tee -a $HOME/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/Updates.txt
+echo -e `date` '\n Optimized TIF into TIFF files with ImageMagick\n' | sudo tee -a $HOME/braille/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/Updates.txt
 done
 ```
 
@@ -140,41 +128,41 @@ done
 It is imperative that files be visually scanned at this point to verify that any text is legible. Otherwise this needs to be rerun with a higher density and/or a less aggressive "resize"
 
 ```zsh
-#Previous is ( Poppler | Ghostscript )
+#Previous is (cairo | ghostscript)
 PREVIOUS=Poppler
 
-for i in $HOME/transcribe/**/pdfconversion/pdftotiff/$PREVIOUS/*.pdf; do
+for i in $HOME/braille/transcribe/**/pdfconversion/pdftotiff/$PREVIOUS/*.pdf; do
 TYPE=`echo $i | /bin/awk -F / '{print $6}'`
 TASK=`echo $i | /bin/awk -F / '{print $8}'`
 FILENAME=`echo $i:t:r`
 FILEPATH=`echo $i:h`
 HOMEBASE=`echo $i | /bin/awk -F / '{print $10}'`
 
-magick $i -density 1500 -despeckle -quality 100% -depth 8 -strip -background white -bordercolor white -border 1x1 -alpha remove -alpha off -resize 50% $HOME/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/pdfconversion/tiffprocessing/magick/"$FILENAME".tiff
+magick $i -density 1500 -despeckle -quality 100% -depth 8 -strip -background white -bordercolor white -border 1x1 -alpha remove -alpha off -resize 50% $HOME/braille/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/pdfconversion/tiffprocessing/magick/"$FILENAME".tiff
 
-echo -e `date` '\n Converted PDF into optimized TIFF files with ImageMagick\n' | tee -a $HOME/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/Updates.txt
+echo -e `date` '\n Converted PDF into optimized TIFF files with ImageMagick\n' | tee -a $HOME/braille/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/Updates.txt
 done
 ```
 
 #### Use Tesseract-OCR and Leptonica to perform Optical Character Recognition
 
 ```zsh
-for i in $HOME/transcribe/**/pdfconversion/tiffprocessing/magick/*.tiff(.); do
+for i in $HOME/braille/transcribe/**/pdfconversion/tiffprocessing/magick/*.tiff(.); do
 TYPE=`echo $i | /bin/awk -F / '{print $6}'`
 TASK=`echo $i | /bin/awk -F / '{print $8}'`
 FILENAME=`echo $i:t:r`
 FILEPATH=`echo $i:h`
 HOMEBASE=`echo $i | /bin/awk -F / '{print $10}'`
 
-tesseract --oem 1 ${i} $HOME/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/ocr/tesseractocr/pdf/"$FILENAME"  pdf
+tesseract --oem 1 ${i} $HOME/braille/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/ocr/tesseractocr/pdf/"$FILENAME"  pdf
 
-tesseract --oem 1 ${i} $HOME/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/ocr/tesseractocr/hocr/"$FILENAME""hocr"  hocr
+tesseract --oem 1 ${i} $HOME/braille/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/ocr/tesseractocr/hocr/"$FILENAME""hocr"  hocr
 
-tesseract --oem 1 ${i} $HOME/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/ocr/tesseractocr/txt/"$FILENAME" 
+tesseract --oem 1 ${i} $HOME/braille/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/ocr/tesseractocr/txt/"$FILENAME" 
 
-touch $HOME/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/ocr/tesseractocr/pdf/"$HOMEBASE"_textout.txt
+touch $HOME/braille/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/ocr/tesseractocr/pdf/"$HOMEBASE"_textout.txt
 
-tesseract --oem 1 ${i} stdout | tee -a $HOME/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/ocr/tesseractocr/pdf/"$HOMEBASE"_textout.txt
+tesseract --oem 1 ${i} stdout | tee -a $HOME/braille/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/ocr/tesseractocr/pdf/"$HOMEBASE"_textout.txt
 
 done
 ```
