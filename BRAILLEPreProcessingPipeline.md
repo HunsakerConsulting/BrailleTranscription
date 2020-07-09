@@ -21,7 +21,6 @@ done
 #### Import PDF file/Create Project Folders and Files
 
 ``` zsh
-
 for i in $HOME/braille/staging/ueb*/**/*.pdf(.); do
 TYPE=`echo $i | /bin/awk -F / '{print $6}'`
 FILENAME=`echo $i:t:r`
@@ -35,7 +34,8 @@ cp ${i} $HOME/braille/transcribe/$TYPE/workdir/$PROJECT/source/$FILENAME/
 echo -e `date` '\n Created working directories and copied in source files\n' | tee -a $HOME/braille/transcribe/$TYPE/workdir/$PROJECT/derivatives/$FILENAME/Updates.txt
 done
 
-
+rclone copy -Pvz --create-empty-src-dirs --dry-run $HOME/braille/transcribe Data:braille/transcribe 
+rclone copy -Pvz --create-empty-src-dirs $HOME/braille/transcribe Data:braille/transcribe 
 
 ```
 #### Optimize PDF files with Ghostwriter
@@ -52,7 +52,11 @@ HOMEBASE=`echo $i | /bin/awk -F / '{print $10}'`
 gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dBATCH -sOutputFile=$HOME/braille/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/pdfcompression/"$FILENAME".pdf ${i}
 
 echo -e `date` '\n Optimized PDF files with Ghostscript' | tee -a $HOME/braille/transcribe/$TYPE/workdir/$TASK/derivatives/$FILENAME/Updates.txt
+
+rclone copy -Pvz --ignore-existing $HOME/braille/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/pdfcompression Data:braille/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/pdfcompression
+
 done
+
 ```
 
 #### Use Ghostwriter or Poppler to write multiple page pdf to individual files  
@@ -65,16 +69,15 @@ This is preferred over a straight pdftocairo output to reduce strain on computer
 
 ```zsh
 for i in $HOME/braille/transcribe/**/pdfcompression/*.pdf(.); do     
-
 TYPE=`echo $i | /bin/awk -F / '{print $6}'`
 TASK=`echo $i | /bin/awk -F / '{print $8}'`
 FILENAME=`echo $i:t:r`
 FILEPATH=`echo $i:h`
 HOMEBASE=`echo $i | /bin/awk -F / '{print $10}'`
-
 gs -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile=$HOME/braille/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/pdfconversion/pdfpaginate/ghostscript/"$FILENAME"_%04d.pdf ${i}
-
 echo -e `date` '\n Separated PDF into multiple files with Ghostscript\n' | tee -a $HOME/braille/transcribe/$TYPE/workdir/$TASK/derivatives/$FILENAME/Updates.txt
+$HOME/braille/transcribe/$TYPE/workdir/$TASK/derivatives/$FILENAME/Updates.txt
+rclone copy -Pv --ignore-existing $HOME/braille/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/pdfconversion/pdfpaginate  Data:braille/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/pdfconversion/pdfpaginate
 done
 ```
 
@@ -91,7 +94,11 @@ HOMEBASE=`echo $i | /bin/awk -F / '{print $10}'`
 pdfseparate ${i} $HOME/braille/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/pdfconversion/pdfpaginate/cairo/"$FILENAME"_%04d.pdf
 
 echo -e `date` '\n Separated PDF into multiple files with Poppler\n' | tee -a $HOME/braille/transcribe/$TYPE/workdir/$TASK/derivatives/$FILENAME/Updates.txt
+
+rclone copy -Pvz --create-empty-dirs ---ignore-existing $HOME/braille/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/pdfconversion/pdfpaginate/cairo/ Data:braille/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/pdfconversion/pdfpaginate/cairo/
 done
+
+rm -r $HOME/braille/transcribe/**/derivatives/**/pdfcompression/*.pdf(.)
 ```
 
 #### Use pdftocairo in Poppler  or Image Magick 7 to convert pdf to tiff files 
