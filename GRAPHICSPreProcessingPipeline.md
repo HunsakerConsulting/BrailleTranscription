@@ -106,12 +106,12 @@ The \**/\* searches recursively through the subdirectories and the (.) is a glob
 
 ```zsh
 PREVIOUS=poppler
-for i in $HOME/transcribe/TactileGraphics/workdir/**/pdftotiff/$PREVIOUS/*.pdf(.); do
-TYPE=`echo $i | /bin/awk -F / '{print $5}'`
-TASK=`echo $i | /bin/awk -F / '{print $7}'`
+for j in $HOME/transcribe/TactileGraphics/workdir/**/pdftotiff/$PREVIOUS/*.pdf(.); do
+TYPE=`echo $i | /bin/awk -F / '{print $6}'`
+TASK=`echo $i | /bin/awk -F / '{print $8}'`
 FILENAME=`echo $i:t:r`
 FILEPATH=`echo $i:h`
-HOMEBASE=`echo $i | /bin/awk -F / '{print $9}'`
+HOMEBASE=`echo $i | /bin/awk -F / '{print $10}'`
 
 pdftocairo -svg $i $HOME/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/pdfsvg/poppler/"$FILENAME".svg
 echo -e `date` '\n Converted PDF into SVG files with Poppler\n' | tee -a $HOME/transcribe/$TYPE/workdir/$TASK/derivatives/$HOMEBASE/Updates.txt
