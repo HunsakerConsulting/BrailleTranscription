@@ -24,32 +24,6 @@ cd
  
 ```
 
-####Install Python3 from Source with Virtual Environments
-
-```zsh
-wget https://www.python.org/ftp/python/3.XXXXX/Python-3.XXXXX.tar.xz
-tar -zxvf Python-3.XXXXX.tgz
-cd Python-3.XXXXX
-./configure --enable-shared --enable-optimizations --prefix $HOME/.local
-make && make install
-ldconfig -v
-cd
-
-#make life easier - shortcut for your zshrc file to default any Python3 calls to the local install
-export python3=$HOME/.local/bin/python3.XXXXX
-export pip3=$HOME/.local/bin/pip3.XXXXX
-
-pip3 install virtualenv
-virtualenv -p python3 ocr_env
-course ocr_env/bin/activate
-
-pip3 install pillow
-pi3p install imutils
-pip3 install opencv-python
-pip3 install pytesseract
-
-```
-
 #### Install Ghostscript, Poppler,  and ImageMagick-7 from Source
 
 ```zsh
@@ -64,10 +38,21 @@ cd
 
 # Poppler compiles with CMAKE
 git clone https://anongit.freedesktop.org/git/poppler/poppler.git
+cd poppler
+git clone git://git.freedesktop.org/git/poppler/test  
 mkdir build
 cd build
 cmake .. -DCMAKE_INSTALL_PREFIX=/home/mrhunsaker/.local -DCMAKE_BUILD_TYPE=release -DTESTDATADIR=/home/mrhunsaker/poppler/test
 make && make install
+cd
+# Perl 5 from Repository uses a custom Configure script
+git clone git@github.com:Perl/perl5.git
+cd perl5
+./Configure -des -Dprefix=$HOME/.local/perl5 -Dusedevel
+make
+make test
+make install
+ldconfig
 cd
 
 # Image-Magick 7 from Repository compiles with gnu make
@@ -99,16 +84,17 @@ sh ./autogen.sh
 ./configure --enable-debug --prefix $HOME/.local
 LDFLAGS="-L/$HOME/.local/lib" CFLAGS="-I/$HOME/.local/include" make && make install
 ldconfig 
+LDFLAGS="-L/$HOME/.local/lib" CFLAGS="-I/$HOME/.local/include" make training && make training-install
 
 cd $HOME/.local/share/tessdata
 wget https://github.com/tesseract-ocr/tessdata_best/blob/master/eng.traineddata\?raw=true 
-ln -s $HOME/.local/share/tessdata/eng.traineddata?raw=true $HOME/.local/share/tessdata/eng.traineddata
+mv $HOME/.local/share/tessdata/eng.traineddata?raw=true $HOME/.local/share/tessdata/eng.traineddata
 
 wget https://github.com/tesseract-ocr/tessdata_best/blob/master/fra.traineddata\?raw=true 
-ln -s $HOME/.local/share/tessdata/fra.traineddata?raw=true $HOME/.local/share/tessdata/fra.traineddata
+mv $HOME/.local/share/tessdata/fra.traineddata?raw=true $HOME/.local/share/tessdata/fra.traineddata
 
 wget https://github.com/tesseract-ocr/tessdata_best/blob/master/deu.traineddata\?raw=true 
-ln -s /home/mrhunsaker/.local/share/tessdata/deu.traineddata?raw=true /home/mrhunsaker/.local/share/tessdata/deu.traineddata
+mv $HOME/.local/share/tessdata/deu.traineddata?raw=true $HOME/.local/share/tessdata/deu.traineddata
 
 cd 
 cd $HOME/.local/tesseract
@@ -117,7 +103,7 @@ make training-install
 ldconfig
 ```
 
-####Miscellaneous Git Repos to Clone
+#### Miscellaneous Git Repos to Clone
 
 These are for other projects involving automated accessible textbook generation
 
