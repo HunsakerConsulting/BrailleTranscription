@@ -1,32 +1,16 @@
-## Set up OpenSUSE 15.2 as Server
+## Set up in OpenSUSE 15.2
 
-###Transactional Server (Read-only)
+### Transactional Server (Read-only)
 
-All System-wide installations have to be done by **root** as below. They are atomic, which means that either everything or nothing is installed. ANY errors will result in any attempted update being rolled back. 
-
- If successful, you will receive this message
-
->Please reboot your machine to activate the changes and avoid data loss.
->New default snapshot is #\<snapshot number\> (/.snapshots/\<snapshot number\>/snapshot).
->transactional-update finished
-
-Otherwise, you will have to scroll up in the console output and find the error that needs to be fixed
+All System-wide installations have to be done by **root** as below. 
 
 ```zsh
-zypper refresh 
-transactional-update up patch pkg in --download-in-advance -t pattern devel_C_C++ devel_basis devel_java devel_python3 devel_qt5 devel_rpm_build console
-ldconfig
-reboot
+zypper refresh in --download-in-advance -t pattern devel_C_C++ devel_basis devel_java devel_python3 devel_qt5 devel_rpm_build console
 
-
-zypper refresh
-transactional-update --continue pkg in --download-in-advance glibc-devel glibc-devel-static glibc-extra glibc-utils texlive autoconf autoconf213 automake libtool pkg-config cmake doxygen asciidoc ant ant-contrib ant-scripts libxslt-devel libxslt-tools xalan-j2-xsltc libxslt1 libxslt-tools libxslt-python java-11-openjdk-devel wget wget-lang freetype freetype-devel freetype-tools libfreetype6 libwmf-devel libwmf-tools libwmf-0_2-7 lcms2 liblcms2-devel liblcms2-doc libxml2-devel libxml2-tools perl-XML-LibXML python3-libxml2-python libyaml-devel libyaml-0-2 libpng16-devel libpng16-tools libtiff-devel libtiff5 libopenjp2-7 libopenjpeg1 libgif7 zlib-devel zlibrary-data zlibrary-devel libicu-devel libpango-1_0-0 libpangomm-2_44-1 libcairo2 libcairo-script-interpreter2 libcairo-gobject2 mozilla-nss mozilla-nss-certs mozilla-nss-devel mozilla-nss-sysinit mozilla-nss-tools pandoc MultiMarkdown-6 cmark discount pandoc texlive-context wkhtmltopdf maven maven-lib maven-local maven-shared gradle gradle-local javapackages-gradle mtree tree xclip vsftpd zsh cairo-devel cairo-tools libcairo2 openjpeg2 openjpeg2-devel cmake-full
-
-ldconfig
-reboot
+zypper refresh in --download-in-advance glibc-devel glibc-devel-static glibc-extra glibc-utils texlive autoconf autoconf213 automake libtool pkg-config cmake doxygen asciidoc ant ant-contrib ant-scripts libxslt-devel libxslt-tools xalan-j2-xsltc libxslt1 libxslt-tools libxslt-python java-11-openjdk-devel wget wget-lang freetype freetype-devel freetype-tools libfreetype6 libwmf-devel libwmf-tools libwmf-0_2-7 lcms2 liblcms2-devel liblcms2-doc libxml2-devel libxml2-tools perl-XML-LibXML python3-libxml2-python libyaml-devel libyaml-0-2 libpng16-devel libpng16-tools libtiff-devel libtiff5 libopenjp2-7 libopenjpeg1 libgif7 zlib-devel zlibrary-data zlibrary-devel libicu-devel libpango-1_0-0 libpangomm-2_44-1 libcairo2 libcairo-script-interpreter2 libcairo-gobject2 mozilla-nss mozilla-nss-certs mozilla-nss-devel mozilla-nss-sysinit mozilla-nss-tools pandoc MultiMarkdown-6 cmark discount pandoc texlive-context wkhtmltopdf maven maven-lib maven-local maven-shared gradle gradle-local javapackages-gradle mtree tree xclip vsftpd zsh cairo-devel cairo-tools libcairo2 openjpeg2 openjpeg2-devel cmake-full
 ```
 
-####Set up ftp
+#### Set up ftp
 
 Done by **root**
 
@@ -50,14 +34,14 @@ chroot_list_enable=YES
 chroot_list_file=/etc/vsftpd.chroot_list
 ```
 
-#####Create chroot list and add users
+##### Create chroot list and add users
 
 ```zsh
 vi /etc/vsftpd.chroot_list
 # add users
 ```
 
-#####Add ports
+##### Add ports
 
 ```zsh
 firewall-cmd --add-port=21/tcp --permanent
@@ -66,7 +50,7 @@ firewall-cmd --reload
 # Will print "Success" if it works
 ```
 
-#####Start server
+##### Start server
 
 Done by **root**
 
@@ -77,7 +61,7 @@ systemctl start vsftpd
 systemctl status vsftpd
 ```
 
-###To set up zsh and set it as default user shell
+### To set up zsh and set it as default user shell
 
 This is still done by **root**
 
