@@ -70,7 +70,7 @@ This method requires less RAM and does not generate as large of tmp files as a p
 
 This is preferred over a straight pdftocairo output to reduce strain on computer memory for pdf files with >100 pages
 
-#####Ghostwriter Method
+##### Ghostwriter Method
 
 ```zsh
 for i in $HOME/transcribe/**/pdfcompression/*.pdf(.); do     
@@ -84,7 +84,7 @@ echo -e `date` '\n Separated PDF into multiple files with Ghostscript\n' | tee -
 done
 ```
 
-#####Poppler Method
+##### Poppler Method
 
 ```zsh
 for i in $HOME/transcribe/**/derivatives/**/pdfcompression/*.pdf(.); do  
@@ -102,7 +102,7 @@ done
 
 Poppler pdftocairo will make ~90MB .tif files. These files are reduced in physical size by ImageMagick 7. The \**/\* searches recursively through the subdirectories and the (.) is a glob operator that tells zsh to search for files (same function as the  -f flag in find when using find within a bash shell)
 
-#####Poppler + ImageMagick
+##### Poppler + ImageMagick
 
 There is an optimization step after Poppler to reduce ~90MB TIF files into 3.5MB TIFF files using ImageMagick
 
@@ -125,7 +125,7 @@ echo -e `date` '\n Optimized TIF into TIFF files with ImageMagick\n' | sudo tee 
 done
 ```
 
-#####ImageMagick
+##### ImageMagick
 
 It is imperative that files be visually scanned at this point to verify that any text is legible. Otherwise this needs to be rerun with a higher density and/or a less aggressive "resize"
 
@@ -169,6 +169,10 @@ tesseract -c preserve_interword_spaces=1 --oem 1 ${i} stdout | sudo tee -a $OUTP
 
 done
 ```
+
+---
+
+
 
 ---
 
@@ -221,6 +225,213 @@ done
 
 ```
 
+### Python Transcription dtbook/daisy to UEB xsl sheet
+
+> ```xml-dtd
+> <?xml version='1.0'?>
+> 
+> <!-- liblouis Braille Translation and Back-Translation Library -->
+> 
+> <!-- Copyright (C) 2010 Swiss Library for the Blind, Visually Impaired and Print Disabled -->
+> 
+> <!-- Copying and distribution of this file, with or without modification, -->
+> <!-- are permitted in any medium without royalty provided the copyright -->
+> <!-- notice and this notice are preserved. This file is offered as-is, -->
+> <!-- without any warranty. -->
+> 
+> <xsl:stylesheet 
+>    version='1.0'
+>    xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
+>    xmlns:dtb="http://www.daisy.org/z3986/2005/dtbook/"	
+>    xmlns:louis="http://liblouis.org/liblouis"
+>    exclude-result-prefixes="dtb">
+>   
+>   <xsl:output omit-xml-declaration="no" encoding="UTF-8" method="xml"
+> 	      indent="yes" media-type="text/xml"/>
+> 
+>   <xsl:param name="translation_table">de-ch-g2.ctb</xsl:param>
+> 
+>   <xsl:template match="dtb:em">
+>     <xsl:apply-templates mode="italic"/>
+>   </xsl:template>
+> 
+>   <xsl:template match="dtb:strong">
+>     <xsl:apply-templates mode="bold"/>
+>   </xsl:template>
+> 
+>   <xsl:template match="text()">
+>     <xsl:value-of select='louis:translate(string(),string($translation_table))'/>
+>   </xsl:template>
+>   
+>   <xsl:template match="text()" mode="italic">
+>     <xsl:value-of select='louis:translate(string(),string($translation_table),"italic")'/>
+>   </xsl:template>
+>   
+>   <xsl:template match="text()" mode="bold">
+>     <xsl:value-of select='louis:translate(string(),string($translation_table),"bold")'/>
+>   </xsl:template>
+>   
+>   <xsl:template match="@*|node()">
+>     <xsl:copy>
+>       <xsl:apply-templates select="@*|node()"/>
+>     </xsl:copy>
+>   </xsl:template>
+>   
+> </xsl:stylesheet>
+> ```
+
+
+
+### Python Transcription XML files into UEB
+
+>```python
+>#! /usr/bin/python -u
+>#
+># liblouis Braille Translation and Back-Translation Library
+>
+># Copyright (C) 2010 Swiss Library for the Blind, Visually Impaired and Print Disabled
+>
+># Copying and distribution of this file, with or without modification,
+># are permitted in any medium without royalty provided the copyright
+># notice and this notice are preserved. This file is offered as-is,
+># without any warranty.
+>
+># This is a very simple example on how to extend libxslt to be able to
+># invoke liblouis from xslt. See also the accompanying
+># dtbook2brldtbook.xsl in the same directory which simpy copies a dtbook
+># xml and translates all the text node into Braille.
+>
+>import louis
+>import libxml2
+>import libxslt
+>import sys
+>import getopt
+>from optparse import OptionParser
+>
+>nodeName = None
+>
+>emphasisMap = {
+>    'plain_text' : louis.plain_text, 
+>    'italic' : louis.italic, 
+>    'underline' : louis.underline, 
+>    'bold' : louis.bold, 
+>    'computer_braille' : louis.computer_braille}
+>
+>def translate(ctx, str, translation_table, emphasis=None):
+>    global nodeName
+>    
+>    try:
+>        pctxt = libxslt.xpathParserContext(_obj=ctx)
+>        ctxt = pctxt.context()
+>        tctxt = ctxt.transformContext()
+>        nodeName = tctxt.insertNode().name
+>    except:
+>        pass
+>
+>    typeform = len(str)*[emphasisMap[emphasis]] if emphasis else None
+>    braille = louis.translate([translation_table], str.decode('utf-8'), typeform=typeform)[0]
+>    return braille.encode('utf-8')
+>
+>def xsltProcess(styleFile, inputFile, outputFile):
+>    """Transform an xml inputFile to an outputFile using the given styleFile"""
+>    styledoc = libxml2.parseFile(styleFile)
+>    style = libxslt.parseStylesheetDoc(styledoc)
+>    doc = libxml2.parseFile(inputFile)
+>    result = style.applyStylesheet(doc, None)
+>    style.saveResultToFilename(outputFile, result, 0)
+>    style.freeStylesheet()
+>    doc.freeDoc()
+>    result.freeDoc()
+>
+>libxslt.registerExtModuleFunction("translate", "http://liblouis.org/liblouis", translate)
+>
+>def main():
+>    usage = "Usage: %prog [options] styleFile inputFile outputFile"
+>    parser = OptionParser(usage)
+>    (options, args) = parser.parse_args()
+>    if len(args) != 3:
+>        parser.error("incorrect number of arguments")
+>    xsltProcess(args[0], args[1], args[2])
+>
+>if __name__ == "__main__":
+>    main()
+>```
+>
+>
+
+### Python Transcription HTML into UEB
+
+```python
+import textwrap 
+import louis 
+from lxmlimport html 
+
+tableList = ["en-ueb-g2.ctb"] 
+lineLength =38 fileIn =input("Please enter the input file name: ") 
+fileOut =input("Please enter the output file name: ") 
+with open(fileOut,"w")as outputFile: 
+   html_root = html.parse(fileIn).getroot() 
+   for head_or_bodyin html_root: 
+     for elemin head_or_body: 
+       if elem.xpath("string()").strip() !="": 
+         line = elem.xpath("string()") 
+         translation = louis.translateString(tableList, line,0,0) 
+         outputFile.write(textwrap.fill(translation, lineLength)) 
+         outputFile.write("\n") 
+print ("Done.")
+```
+
+
+
+### Python Transcription TEXT files into UEB
+
+> ```python
+> """ This program, lou_transtext.py, takes a plain text  input file, translates it with liblouis according to the tablelist variable 
+> and formats it with a line length given in the lineLength variable.
+> Paragraphs are shown by an indentation of two blank spaces.
+> If the file you wish to translate is not in plain text you must convert it with a conversion program.
+> This program asks for the names of the input file and the output file.  
+> As provided, tableList is ["en-ueb-g2.ctb] Note that it is a Python list. 
+> lineLength is currently set to 38. You can set tableList and lineLength according to your preferences.
+> """
+> 
+> tableList = ["en-ueb-g2.ctb"]
+> lineLength = 38
+> import louis
+> from re import match
+> import textwrap
+> fileIn = input ("Please enter the input file name: ")
+> fileOut = input ("Please enter the output file name: ")
+> inputFile = open (fileIn, "rt")
+> outputFile = open (fileOut, "wt", newline='\r\n')
+> p = [' '] # p is for paragraph
+> prevBlank = True #blank line
+> while True:
+>     line = inputFile.readline()
+>     if line == "":
+>         break
+>     line2 = line.strip()
+>     if line2 == "":
+>         prevBlank = True
+>         continue
+>     if not (match('[a-z]', line2) == None and prevBlank):
+>         prevblank = False
+>         p.append(line2)
+>         continue
+>     else:
+>         line = ' '.join(p)
+>         translation = louis.translateString (tableList, line, 0, 0)
+>         outputFile.write (textwrap.fill (translation, lineLength))
+>         outputFile.write("\n")
+>         p = [' ']
+>         p.append(line2)
+>         prevBlank = False
+> 
+> inputFile.close()
+> outputFile.close()
+> print ("Done.")
+> ```
+
 
 
 ## Helpful Scripts
@@ -235,9 +446,9 @@ To add 1 to page numbers at the end of page to generate page change indicators f
 sed -i -r 's/(~)([0-9]*)/echo "\1$((\2+1))"/ge' [file path]
 ```
 
-####Python and OpenCV for Image Tweaking
+#### Python and OpenCV for Image Tweaking
 
-####Set up Python Environment
+#### Set up Python Environment
 
 ```python
 virtualenv -p python3 ocr_env
@@ -248,7 +459,7 @@ course ocr_env/bin/activate
 
 
 
-####Image Refinement with Python and OpenCV (NEED TO TWEAK AND TROUBLESHOOT)
+#### Image Refinement with Python and OpenCV (NEED TO TWEAK AND TROUBLESHOOT)
 
 ```python
 # USAGE

@@ -7,9 +7,12 @@ sh ./autogen.sh
 ./configure --prefix $HOME/.local
 make 
 make install
+# For python bindings
+cd python
+python setup.py instal
 ldconfig -v 
 
-cd
+# First verify libxml2-devel is installed and run ldconfig
 git@github.com:liblouis/liblouisutdml.git
 cd liblouisutdml
 sh ./autogen.sh
@@ -20,7 +23,6 @@ make install
 cd java
 ant
 ldconfig -v 
-cd
  
 ```
 
@@ -43,7 +45,7 @@ mkdir build
 cd build
 cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/.local -DCMAKE_BUILD_TYPE=release -DTESTDATADIR=$HOME/poppler/test
 make && make install
-cd
+ldconfig
 
 # Perl 5 from Repository uses a custom Configure script
 git clone git@github.com:Perl/perl5.git
@@ -53,29 +55,25 @@ make
 make test
 make install
 ldconfig
-cd
 
 # Image-Magick 7 from Repository compiles with gnu make
 git clone https://github.com/ImageMagick/ImageMagick.git
 cd ./ImageMagick
-./configure --prefix $HOME/.local --with-modules --enable-shared --with-gslib=/home/mrhunsaker/.local/share/ghostscript/9.53/lib --with-gs-font-dir=/home/mrhunsaker/.local/share/ghostscript/9.53/fonts --with-perl-options=PREFIX=/home/mrhunsaker/.local
+./configure --prefix $HOME/.local --with-modules --enable-shared --with-gslib=/home/mrhunsaker/.local/share/ghostscript/**/lib --with-gs-font-dir=/home/mrhunsaker/.local/share/ghostscript/**/fonts --with-perl-options=PREFIX=/home/mrhunsaker/.local
 make && make install
 ldconfig
-cd
 ```
 
 #### Install Leptonica, then install Tesseract-OCR from source
 
 ```zsh
 # Clone Leptonica Git Repository
-cd
 git clone https://github.com/DanBloomberg/leptonica.git
 cd /leptonica
 sh ./autogen.sh
 ./configure --prefix $HOME/.local
 make && make install
 ldconfig 
-cd
 
 # Clone Tesseract Git Repository to penultimate update
 git clone https://github.com/tesseract-ocr/tesseract.git
@@ -83,15 +81,18 @@ cd tesseract
 sh ./autogen.sh
 ./configure --prefix $HOME/.local
 LDFLAGS="-L/$HOME/.local/lib" CFLAGS="-I/$HOME/.local/include" make && make install
-ldconfig 
+
+# Make and install training tools
 LDFLAGS="-L/$HOME/.local/lib" CFLAGS="-I/$HOME/.local/include" make training && make training-install
 
+#install languages
 cd $HOME/.local/share/tessdata
 wget https://github.com/tesseract-ocr/tessdata_best/blob/master/eng.traineddata\?raw=true -O eng.traineddata
 
 wget https://github.com/tesseract-ocr/tessdata_best/blob/master/fra.traineddata\?raw=true -O fra.traineddata
 
 wget https://github.com/tesseract-ocr/tessdata_best/blob/master/deu.traineddata\?raw=true -O deu.traineddata
+
 ```
 
 #### Miscellaneous Git Repos to Clone

@@ -1,64 +1,13 @@
 ## Set up in OpenSUSE 15.2
 
-### Transactional Server (Read-only)
+### On Windows 10 running WSL2
 
-All System-wide installations have to be done by **root** as below. 
+All System-wide installations have to be done by **root** as below.  My setup separates my user from **root**
 
 ```zsh
 zypper refresh in --download-in-advance -t pattern devel_C_C++ devel_basis devel_java devel_python3 devel_qt5 devel_rpm_build console
 
-zypper refresh in --download-in-advance glibc-devel glibc-devel-static glibc-extra glibc-utils texlive autoconf autoconf213 automake libtool pkg-config cmake doxygen asciidoc ant ant-contrib ant-scripts libxslt-devel libxslt-tools xalan-j2-xsltc libxslt1 libxslt-tools libxslt-python java-11-openjdk-devel wget wget-lang freetype freetype-devel freetype-tools libfreetype6 libwmf-devel libwmf-tools libwmf-0_2-7 lcms2 liblcms2-devel liblcms2-doc libxml2-devel libxml2-tools perl-XML-LibXML python3-libxml2-python libyaml-devel libyaml-0-2 libpng16-devel libpng16-tools libtiff-devel libtiff5 libopenjp2-7 libopenjpeg1 libgif7 zlib-devel zlibrary-data zlibrary-devel libicu-devel libpango-1_0-0 libpangomm-2_44-1 libcairo2 libcairo-script-interpreter2 libcairo-gobject2 mozilla-nss mozilla-nss-certs mozilla-nss-devel mozilla-nss-sysinit mozilla-nss-tools pandoc MultiMarkdown-6 cmark discount pandoc texlive-context wkhtmltopdf maven maven-lib maven-local maven-shared gradle gradle-local javapackages-gradle mtree tree xclip vsftpd zsh cairo-devel cairo-tools libcairo2 openjpeg2 openjpeg2-devel cmake-full
-```
-
-#### Set up ftp
-
-Done by **root**
-
-```zsh
-vi /etc/vsftpd.conf
-#These are CHANGES that need to be made (changing, commenting, or adding settings)
-#Make the service “listen”. IPV4 and disable IPV6.
-listen=YES
-#listen_ipv6=NO
-
-#Allow writing
-write_enable=YES
-
-#Set port 21 (best for FileZilla default)
-#connect_from_port_20=YES
-listen_port=21
-
-#Set up chroot list for FTP users
-chroot_local_user=YES
-chroot_list_enable=YES
-chroot_list_file=/etc/vsftpd.chroot_list
-```
-
-##### Create chroot list and add users
-
-```zsh
-vi /etc/vsftpd.chroot_list
-# add users
-```
-
-##### Add ports
-
-```zsh
-firewall-cmd --add-port=21/tcp --permanent
-firewall-cmd --add-port=30000-30100/tcp --permanent
-firewall-cmd --reload
-# Will print "Success" if it works
-```
-
-##### Start server
-
-Done by **root**
-
-```zsh
-# Starts ftp server
-systemctl start vsftpd
-# Checks status
-systemctl status vsftpd
+zypper refresh in --download-in-advance glibc-devel glibc-devel-static glibc-extra glibc-utils texlive autoconf autoconf213 automake libtool pkg-config cmake doxygen asciidoc ant ant-contrib ant-scripts libxslt-devel libxslt-tools xalan-j2-xsltc libxslt1 libxslt-tools libxslt-python java-11-openjdk-devel wget wget-lang freetype freetype-devel freetype-tools libfreetype6 libwmf-devel libwmf-tools libwmf-0_2-7 lcms2 liblcms2-devel liblcms2-doc libxml2-devel libxml2-tools perl-XML-LibXML python3-libxml2-python libyaml-devel libyaml-0-2 libpng16-devel libpng16-tools libtiff-devel libtiff5 libopenjp2-7 libopenjpeg1 libgif7 zlib-devel zlibrary-data zlibrary-devel libicu-devel libpango-1_0-0 libpangomm-2_44-1 libcairo2 libcairo-script-interpreter2 libcairo-gobject2 mozilla-nss mozilla-nss-certs mozilla-nss-devel mozilla-nss-sysinit mozilla-nss-tools pandoc MultiMarkdown-6 cmark discount pandoc texlive-context wkhtmltopdf maven maven-lib maven-local maven-shared gradle gradle-local javapackages-gradle mtree tree xclip vsftpd zsh cairo-devel cairo-tools libcairo2 openjpeg2 openjpeg2-devel cmake-full tmux
 ```
 
 ### To set up zsh and set it as default user shell
@@ -76,7 +25,11 @@ sudo vi /etc/passwd
 This is done as user or else it will be saved under **\$HOME** for **root** and not **user**
 
 ```zsh
-vi ~/.zshrc #enter .zshrc with vim to edit (can also use emacs or nano as desired)
+#enter .zshrc with vim to edit (can also use emacs or nano as desired)
+vi ~/.zshrc 
+
+# Copy and paste the following to .zshrc
+
 ###################################
 # Set up Paths and Linkers for $HOME/.local program install
 ###################################
@@ -87,7 +40,12 @@ export LIBRARY_PATH=$HOME/.local/lib:$HOME/.local/lib64
 export PKG_CONFIG_PATH=$HOME/.local/lib/pkgconfig:$HOME/.local/lib64/pkgconfig
 export LD_LIBRARY_PATH=$HOME/.local/lib:$HOME/.local/lib64
 export MANPATH=$HOME/.local/share/man:$(manpath)
-
+export PATH=$HOME/.local/python/Python3.9:$PATH
+export PATH=$HOME/.local/bin/:$PATH
+alias python=$HOME/.local/python/bin/python3
+alias python3=$HOME/.local/python/bin/python3
+alias pip3=$HOME/.local/python/bin/pip3
+alias pip=$HOME/.local/python/bin/pip3
 ###################################
 # Configurations for zsh
 ###################################
@@ -141,7 +99,10 @@ ssh-keygen -t rsa -b 4096 -C "hunsakerconsulting@gmail.com"
 eval "$(ssh-agent -s)"
 ssh-add $HOME/.ssh/id_rsa
 xclip -sel clip < $HOME/.ssh/id_rsa.pub
-#paste this into GitHub under Settings > SSH and GPG Keys
+# paste this into GitHub under Settings > SSH and GPG Keys
+
+# Set Git to use Windows Credential manager
+git config --global credential.helper "/mnt/c/Program\ Files/Git/mingw64/libexec/git-core/git-credential-manager.exe"
 ```
 
 #### Set up to Install Programs into \$HOME/.local
@@ -167,17 +128,5 @@ Set up basic directories in **\$HOME/.local**
 
 ```zsh
 mkdir -p ~/.local/{bin,share/man,include,lib/pkgconfig,lib64/pkgconfig,src}
-```
-
-####Environmental Variables for \$HOME/.local install (in \$HOME/.zshrc)
-
-```zsh
-export PATH=$HOME/.local/bin:$PATH
-export C_INCLUDE_PATH=$HOME/.local/include
-export CPLUS_INCLUDE_PATH=$HOME/.local/include
-export LIBRARY_PATH=$HOME/.local/lib
-export PKG_CONFIG_PATH=$HOME/.local/lib/pkgconfig
-export LD_LIBRARY_PATH=$HOME/.local/lib #crude/blunt force method
-export MANPATH=$HOME/.local/share/man:$(manpath)
 ```
 

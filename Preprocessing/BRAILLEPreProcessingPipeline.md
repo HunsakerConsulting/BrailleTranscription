@@ -65,7 +65,7 @@ This method requires less RAM and does not generate as large of tmp files as a p
 
 This is preferred over a straight pdftocairo output to reduce strain on computer memory for pdf files with >100 pages
 
-#####Ghostwriter Method
+##### Ghostwriter Method
 
 ```zsh
 for i in $HOME/braille/transcribe/**/pdfcompression/*.pdf(.); do     
@@ -81,7 +81,7 @@ rclone copy -Pv --ignore-existing $HOME/braille/transcribe/$TYPE/workdir/$TASK/d
 done
 ```
 
-#####Poppler Method
+##### Poppler Method
 
 ```zsh
 for i in $HOME/braille/transcribe/**/derivatives/**/pdfcompression/*.pdf(.); do  
@@ -105,7 +105,7 @@ rm -r $HOME/braille/transcribe/**/derivatives/**/pdfcompression/*.pdf(.)
 
 Poppler pdftocairo will make ~90MB .tif files. These files are reduced in physical size by ImageMagick 7. The \**/\* searches recursively through the subdirectories and the (.) is a glob operator that tells zsh to search for files (same function as the  -f flag in find when using find within a bash shell)
 
-#####Poppler + ImageMagick
+##### Poppler + ImageMagick
 
 There is an optimization step after Poppler to reduce ~90MB TIF files into 3.5MB TIFF files using ImageMagick
 
@@ -134,7 +134,7 @@ echo -e `date` '\n Optimized TIF into TIFF files with ImageMagick\n' | sudo tee 
 done
 ```
 
-#####ImageMagick
+##### ImageMagick
 
 It is imperative that files be visually scanned at this point to verify that any text is legible. Otherwise this needs to be rerun with a higher density and/or a less aggressive "resize"
 

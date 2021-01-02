@@ -21,11 +21,9 @@ foreach($file in $filepath)
 
 ```
 
-####ZSH
+#### ZSH
 
-
-
-####TEST Pytesseract
+#### TEST Pytesseract
 
 ```python
 import cv2
