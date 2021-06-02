@@ -68,12 +68,9 @@ RUN zypper -n install \
     poppler-tools \
     libxml2-tools \
     cmake-full \
+    R-base \
     cmake 
 RUN ldconfig -v
-
-ENV R_VERSION=4.1.0
-RUN curl -O https://cdn.rstudio.com/r/opensuse-152/pkgs/R-${R_VERSION}-1-1.x86_64.rpm
-RUN zypper --no-gpg-checks install R-${R_VERSION}-1-1.x86_64.rpm
 
 # Download GitHub Repos via HTTPS
 WORKDIR /home
@@ -150,18 +147,8 @@ RUN pip install --upgrade pip && \
     argparse-utils \
     matplotlib \
     pytesseract \
-    python-poppler \
-    python3-ghostscript \
-    py-pandoc \
     pylouis \
-    dots-editor \
     cython \
-    drawille \
-    rockart \
-    louisxml \
-    pybraille \
-    ipython \
-    jupyter \
     pillow 
 
 WORKDIR /home
@@ -172,7 +159,6 @@ RUN rm -rf /home/ImageMagick
 RUN rm -rf /home/leptonica
 RUN rm -rf /home/tesseract
 
-RUN R -e 'install.packages(c()dependencies=TRUE, repos='http://cran.rstudio.com/')'
 WORKDIR /home
 RUN /bin/zsh
 ENTRYPOINT [ "/bin/zsh" ]
