@@ -5,7 +5,7 @@ LABEL maintainer="Hunsaker Consulting <hunsakerconsulting@gmail.com>"
 ENV RUNNING_IN_DOCKER true
 #######################################################################
 # Add necessary rpm repositories
-RUN zypper ar -f -G -https://download.opensuse.org/repositories/openSUSE:Leap:15.2:Update/standard/openSUSE:Leap:15.2:Update.repo
+RUN zypper ar -f -G  https://download.opensuse.org/repositories/openSUSE:Leap:15.2:Update/standard/openSUSE:Leap:15.2:Update.repo
 RUN zypper ar -f -G  http://download.opensuse.org/repositories/devel:/tools:/building/openSUSE_Leap_15.2/devel:tools:building.repo
 RUN zypper ar -f -G  http://download.opensuse.org/repositories/science/openSUSE_Leap_15.2/science.repo
 RUN zypper ar -f -G  http://download.opensuse.org/repositories/mozilla:/experimental/openSUSE_Leap_15.2/mozilla:experimental.repo
@@ -15,7 +15,7 @@ RUN zypper ar -f -G  http://download.opensuse.org/repositories/Apache/openSUSE_L
 RUN zypper ar -f -G  http://download.opensuse.org/repositories/Apache:/Modules/Apache_openSUSE_Leap_15.2/Apache:Modules.repo
 RUN zypper ar -f -G  http://download.opensuse.org/repositories/utilities/openSUSE_Leap_15.2/utilities.repo
 #######################################################################
-# Fetch build dependencies
+# Fetch and install build tools
 RUN zypper refresh && zypper -n install -t pattern \
     devel_basis \
     devel_C_C++ \
@@ -35,8 +35,10 @@ RUN zypper -n install \
     cairo-tools \
     cmake \
     cmake-full \
+    coreutils \
     doxygen \
     freetype-devel \
+    ghostscript \
     git \
     glibc-devel \
     gradle \
@@ -74,16 +76,28 @@ RUN zypper -n install \
     libxslt-devel \
     libxslt-tools\
     libyaml-devel \
+    maven \
+    maven-assembly-plugin \
+    maven-plugins-pom \
+    maven-parent \
+    maven-lib \
+    maven-local \
     mozilla-nss-devel \
     nodejs14 \
     npm14 \
+    opencv \
+    libopencv4_5 \
     openjpeg2-devel \
     pandoc \
     perl \
     pkg-config \
     poppler-tools \
     R-base \
+    rclone \
+    rpm \
+    rpm-build \
     ruby \
+    tensorflow-devel \
     tensorflow2 \
     texlive \
     tmux \
@@ -94,81 +108,80 @@ RUN zypper -n install \
     zlib-devel \
     zlibrary-devel \
     zsh 
- RUN ldconfig -v
+# Install tensorflow-devel for integration into tesseract-ocr
+RUN wget  https://download.opensuse.org/distribution/leap/15.2/repo/oss/x86_64/tensorflow-devel-1.15.2-lp152.3.6.x86_64.rpm 
+RUN zypper -n install \
+    tensorflow-devel-1.15.2-lp152.3.6.x86_64.rpm
+RUN ldconfig -v
 #######################################################################
-# Install Maven 
-WORKDIR /opt
-    RUN wget https://apache.osuosl.org/maven/maven-3/3.8.1/binaries/apache-maven-3.8.1-bin.tar.gz
-    RUN tar xzvf apache-maven-3.8.1-bin.tar.gz
-RUN export PATH=/opt/apache-maven-3.8.1/bin:$PATH
-RUN export alias mvn=/opt/apache-maven-3.8.1/bin/mvn
+ENV PATH="/opt/apache-maven-3.8.1/bin:${PATH}"
+ENV mvn="/opt/apache-maven-3.8.1/bin/mvn"
 #######################################################################
 # Download GitHub Repos via HTTPS
+    RUN git config --global url."https://github.com/".insteadOf git@github.com:
+    RUN git config --global url."https://".insteadOf git://
 WORKDIR /home
-    RUN git clone --recurse-submodules https://github.com/daisy/pipeline-assembly.git
-    RUN git clone git://git.ghostscript.com/ghostpdl.git
-    RUN git clone git://github.com/musescore/MuseScore.git
-    RUN git clone https://github.com/Audiveris/audiveris.git
-    RUN git clone https://github.com/Audiveris/omr-dataset-tools.git
-    RUN git clone https://github.com/DanBloomberg/leptonica.git
-    RUN git clone https://github.com/ImageMagick/ImageMagick.git
-    RUN git clone https://github.com/liblouis/liblouis.git
-    RUN git clone https://github.com/liblouis/liblouisutdml.git
-    RUN git clone https://github.com/rbeezer/mathbook.git
-    RUN git clone https://github.com/tesseract-ocr/tessdata.git
-    RUN git clone https://github.com/tesseract-ocr/tesseract.git
-    RUN git clone https://github.com/zorkow/speech-rule-engine.git
-    RUN git clone https://gitlab.freedesktop.org/freetype/freetype.git
+    RUN git clone --recurse-submodules https://github.com/HunsakerConsulting/pipeline-assembly.git
+    RUN git clone --recurse-submodules git://git.ghostscript.com/ghostpdl.git
+    RUN git clone  --recurse-submodules git://github.com/musescore/MuseScore.git
+    RUN git clone  --recurse-submodules https://github.com/Audiveris/audiveris.git
+    RUN git clone  --recurse-submodules https://github.com/Audiveris/omr-dataset-tools.git
+    RUN git clone  --recurse-submodules https://github.com/DanBloomberg/leptonica.git
+    RUN git clone --recurse-submodules https://github.com/ImageMagick/ImageMagick.git
+    RUN git clone --recurse-submodules https://github.com/liblouis/liblouis.git
+    RUN git clone --recurse-submodules https://github.com/liblouis/liblouisutdml.git
+    RUN git clone --recurse-submodules https://github.com/rbeezer/mathbook.git
+    RUN git clone --recurse-submodules https://github.com/tesseract-ocr/tessdata.git
+    RUN git clone --recurse-submodules https://github.com/tesseract-ocr/tesseract.git
+    RUN git clone --recurse-submodules  https://github.com/zorkow/speech-rule-engine.git
+    RUN git clone --recurse-submodules https://github.com/OCR-D/ocrd_all.git
 #######################################################################
 # Install Daisy Pipeline 2
-WORKDIR /home/pipeline-assembly
-    RUN git submodule update --init --recursive
-    RUN make
+#WORKDIR /home/pipeline-assembly
+#    RUN git submodule update --init --recursive
+#    RUN make
+RUN ldconfig -v
 #######################################################################
 # Install LibLouis
 WORKDIR /home/liblouis
     RUN sh ./autogen.sh
     RUN ./configure --enable-ucs4 &&  make && make install 
-    RUN ldconfig -v
+RUN ldconfig -v
 #######################################################################
 # Install Python Bindings for LibLouis
 WORKDIR /home/liblouis/python
     RUN python3 setup.py install
-    RUN ldconfig -v
+RUN ldconfig -v
 #######################################################################
 # Install LibLouisUTDML
 WORKDIR /home/liblouisutdml
     RUN sh ./autogen.sh
     RUN ./configure && make && make install  
-    RUN ldconfig -v
+RUN ldconfig -v
 #######################################################################
-# Install java bindings for LibLouisUTDML
+# Install java bindings for LibLouisUTDML (uses apache-ant)
 WORKDIR /home/liblouisutdml/java
     RUN ant
-    RUN ldconfig -v
-#######################################################################
-# Install Ghostscript
-WORKDIR /home/ghostpdl
-    RUN sh ./autogen.sh
-    RUN ./configure && make && make install 
-    RUN ldconfig -v
+RUN ldconfig -v
 #######################################################################
 # Install Image-Magick 7
 WORKDIR /home/ImageMagick
     RUN ./configure && make && make install
-    RUN ldconfig -v
+RUN ldconfig -v
 #######################################################################
 # Install Leptonica
 WORKDIR /home/leptonica
     RUN sh ./autogen.sh
     RUN ./configure && make && make install
-    RUN ldconfig -v
+RUN ldconfig -v
 #######################################################################
 # Install Tesseract-OCR with TensorFlow
 WORKDIR /home/tesseract
+    RUN autoupdate --verbose
     RUN sh ./autogen.sh
-    RUN ./configure --with-tensorflow && make && make install 
-    RUN ldconfig -v
+#    RUN ./configure --with-tensorflow && make && make install 
+#    RUN ./configure && make && make install 
+RUN ldconfig -v
 #######################################################################
 # Install Language Files for Tesseract-OCR
 WORKDIR /usr/local/share/tessdata
@@ -181,34 +194,29 @@ RUN ldconfig -v
 #######################################################################
 # Install Training Tools for Tesseract-OCR
 WORKDIR /home/tesseract
-    RUN make training
-    RUN make training-install
-RUN ldconfig -v
-#######################################################################
-# Install FreeType
-WORKDIR /home/freetype
-    RUN sh ./autogen.sh
-    RUN ./configure && make && make install
-RUN ldconfig -v
+#    RUN make training
+#    RUN make training-install
+#RUN ldconfig -v
 #######################################################################
 # Install Audiveris OMR
-WORKDIR /home/audiveris
-    RUN git checkout development
-    RUN git pull --all
-    RUN ./gradlew build
-RUN ldconfig -v
+#WORKDIR /home/audiveris
+#    RUN git checkout development
+#    RUN git pull --all
+#    RUN ./gradlew build
+#RUN ldconfig -v
 #######################################################################
 # Install MuseScore
-WORKDIR /home/musescore
-    ENV qmake='exec qmake-qt5 ${*}'
-RUN ./build.cmake && make && make install
+#WORKDIR /home/musescore
+#    ENV qmake='exec qmake-qt5 ${*}'
+#RUN ./build.cmake && make && make install
 #######################################################################
 # Install up OCROPUS/OCROPY
-WORKDIR /home
-    RUN wget -nd https://github.com/zuphilip/ocropy-models/raw/master/en-default.pyrnn.gz
-    RUN mv en-default.pyrnn.gz models/
-    RUN python3 setup.py install
-RUN ldconfig -v
+#WORKDIR /home
+#    RUN wget -nd https://github.com/zuphilip/ocropy-models/raw/master/en-default.pyrnn.gz
+#    RUN mkdir ./models
+#    RUN mv en-default.pyrnn.gz models/
+#    RUN python3 setup.py install
+#RUN ldconfig -v
 #######################################################################
 # Set up MathJax and SRE
 WORKDIR /usr/src/app
@@ -217,12 +225,15 @@ WORKDIR /usr/src/app
     RUN npm install --global mathjax-node -y
     RUN npm install --global mathjax-node-sre -y
     RUN npm install --global speech-rule-engine -y
+    RUN npm install --global @daisy/ace -y
 RUN ldconfig -v
 #######################################################################
 # Set up Python for Image Extraction
 WORKDIR /usr/src/app
     RUN zypper -n install python3-pip 
-    RUN pip install --upgrade pip && \
+    RUN pip install --upgrade pip
+    RUN pip install wheel 
+    RUN pip install \
         argparse \
         argparse-utils \
         calamari-ocr \
@@ -238,7 +249,7 @@ WORKDIR /usr/src/app
         pandas \
         pandas \
         Pillow \
-        pip install \
+        pretextbook \
         pylouis \
         pytesseract \
         pytesstrain \
@@ -249,7 +260,16 @@ WORKDIR /usr/src/app
         scikit-plot \
         Scipy \
         scipy \
-        tensorflow
+        wrapt --upgrade --ignore-installed wrapt \
+        tensorflow \
+		torch \
+		torchvision \
+		torchaudio
+#######################################################################
+# Install OCR-D pipeline
+#WORKDIR /ocrd_all
+#    RUN make deps-ubuntu
+#    RUN make all
 #######################################################################
 # Clean up unneeded directories and files
 WORKDIR /home
@@ -265,3 +285,6 @@ WORKDIR /home
     RUN rm -rf /home/MuseScore
     RUN rm -rf /opt/apache-maven-3.8.1-bin.tar.gz
 #######################################################################
+WORKDIR /home
+    RUN /bin/zsh
+ENTRYPOINT [ "/bin/zsh" ]
