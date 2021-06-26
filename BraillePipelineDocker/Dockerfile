@@ -97,7 +97,6 @@ RUN zypper -n install \
     rpm \
     rpm-build \
     ruby \
-    tensorflow-devel \
     tensorflow2 \
     texlive \
     tmux \
@@ -194,16 +193,16 @@ RUN ldconfig -v
 #######################################################################
 # Install Training Tools for Tesseract-OCR
 WORKDIR /home/tesseract
-#    RUN make training
-#    RUN make training-install
-#RUN ldconfig -v
+    RUN make training
+    RUN make training-install
+RUN ldconfig -v
 #######################################################################
 # Install Audiveris OMR
-#WORKDIR /home/audiveris
-#    RUN git checkout development
-#    RUN git pull --all
-#    RUN ./gradlew build
-#RUN ldconfig -v
+WORKDIR /home/audiveris
+    RUN git checkout development
+    RUN git pull --all
+    RUN ./gradlew build
+RUN ldconfig -v
 #######################################################################
 # Install MuseScore
 #WORKDIR /home/musescore
@@ -211,12 +210,12 @@ WORKDIR /home/tesseract
 #RUN ./build.cmake && make && make install
 #######################################################################
 # Install up OCROPUS/OCROPY
-#WORKDIR /home
-#    RUN wget -nd https://github.com/zuphilip/ocropy-models/raw/master/en-default.pyrnn.gz
-#    RUN mkdir ./models
-#    RUN mv en-default.pyrnn.gz models/
-#    RUN python3 setup.py install
-#RUN ldconfig -v
+WORKDIR /home
+    RUN wget -nd https://github.com/zuphilip/ocropy-models/raw/master/en-default.pyrnn.gz
+    RUN mkdir ./models
+    RUN mv en-default.pyrnn.gz models/
+    RUN python3 setup.py install
+RUN ldconfig -v
 #######################################################################
 # Set up MathJax and SRE
 WORKDIR /usr/src/app
@@ -267,9 +266,9 @@ WORKDIR /usr/src/app
 		torchaudio
 #######################################################################
 # Install OCR-D pipeline
-#WORKDIR /ocrd_all
-#    RUN make deps-ubuntu
-#    RUN make all
+WORKDIR /ocrd_all
+    RUN make
+    RUN make all
 #######################################################################
 # Clean up unneeded directories and files
 WORKDIR /home
@@ -282,8 +281,7 @@ WORKDIR /home
     RUN rm -rf /home/pipeline-assembly
     RUN rm -rf /home/audiveris
     RUN rm -rf /home/freetype
-    RUN rm -rf /home/MuseScore
-    RUN rm -rf /opt/apache-maven-3.8.1-bin.tar.gz
+    RUN rm -rf /home/MuseScore 
 #######################################################################
 WORKDIR /home
     RUN /bin/zsh
