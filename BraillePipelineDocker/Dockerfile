@@ -112,6 +112,7 @@ RUN wget  https://download.opensuse.org/distribution/leap/15.2/repo/oss/x86_64/t
 RUN zypper -n install \
     tensorflow-devel-1.15.2-lp152.3.6.x86_64.rpm
 RUN ldconfig -v
+
 #######################################################################
 ENV PATH="/opt/apache-maven-3.8.1/bin:${PATH}"
 ENV mvn="/opt/apache-maven-3.8.1/bin/mvn"
