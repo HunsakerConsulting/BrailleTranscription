@@ -97,6 +97,7 @@ RUN zypper -n install \
     rpm \
     rpm-build \
     ruby \
+    screen \
     tensorflow2 \
     texlive \
     tmux \
