@@ -14,6 +14,8 @@ RUN zypper ar -f -G  http://download.opensuse.org/repositories/Java:/packages/op
 RUN zypper ar -f -G  http://download.opensuse.org/repositories/Apache/openSUSE_Leap_15.2/Apache.repo
 RUN zypper ar -f -G  http://download.opensuse.org/repositories/Apache:/Modules/Apache_openSUSE_Leap_15.2/Apache:Modules.repo
 RUN zypper ar -f -G  http://download.opensuse.org/repositories/utilities/openSUSE_Leap_15.2/utilities.repo
+RUN zypper ar -f -G https://download.opensuse.org/repositories/devel:languages:python:backports/openSUSE_Leap_15.2/devel:languages:python:backports.repo
+#RUN zypper ar -f -G https://download.opensuse.org/repositories/openSUSE:Factory:RISCV/standard/openSUSE:Factory:RISCV.repo
 #######################################################################
 # Fetch and install build tools
 RUN zypper refresh && zypper -n install -t pattern \
@@ -27,10 +29,12 @@ RUN ldconfig -v
 #######################################################################
 # Fetch and install library dependencies
 RUN zypper -n install \
+    R-base \
     ant \
     apache-pdfbox \
     autoconf \
     automake \
+    cairo-devel \
     cairo-devel \
     cairo-tools \
     cmake \
@@ -42,23 +46,8 @@ RUN zypper -n install \
     git \
     glibc-devel \
     gradle \
+    insighttoolkit \
     java-11-openjdk-devel \
-    libboost_system1_66_0-32bit \
-    libcairo2 \
-    cairo-devel \
-    libgif7 \
-    libicu-devel \
-    liblcms2-devel \
-    libopenjp2-7 \
-    libopenjpeg1 \
-    libpango-1_0-0 \
-    pango-devel \
-    libpangomm-2_44-1 \
-    libpng16-devel \
-    libprotobuf26 \
-    libprotoc26 \
-    libqt5-qtpaths \
-    libqt5-qttools \
     libQt5Core5 \
     libQt5Gui5 \
     libQt5Location5 \
@@ -66,6 +55,21 @@ RUN zypper -n install \
     libQt5Test5 \
     libQt5Widgets5 \
     libQt5Xml5 \
+    libboost_system1_66_0-32bit \
+    libcairo2 \
+    libgif7 \
+    libicu-devel \
+    liblcms2-devel \
+    libopencv4_5 \
+    libopenjp2-7 \
+    libopenjpeg1 \
+    libpango-1_0-0 \
+    libpangomm-2_44-1 \
+    libpng16-devel \
+    libprotobuf26 \
+    libprotoc26 \
+    libqt5-qtpaths \
+    libqt5-qttools \
     libtensorflow2 \
     libtiff-devel \
     libtiff5 \
@@ -78,25 +82,27 @@ RUN zypper -n install \
     libyaml-devel \
     maven \
     maven-assembly-plugin \
-    maven-plugins-pom \
-    maven-parent \
     maven-lib \
     maven-local \
+    maven-parent \
+    maven-plugins-pom \
     mozilla-nss-devel \
     nodejs14 \
     npm14 \
     opencv \
-    libopencv4_5 \
     openjpeg2-devel \
     pandoc \
+    pango-devel \
     perl \
+    pdftk \
     pkg-config \
     poppler-tools \
-    R-base \
+    protobuf \
     rclone \
     rpm \
     rpm-build \
     ruby \
+    rubygems \
     screen \
     tensorflow2 \
     texlive \
