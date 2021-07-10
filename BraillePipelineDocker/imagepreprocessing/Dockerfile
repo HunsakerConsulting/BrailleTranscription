@@ -4,6 +4,10 @@ LABEL maintainer="Hunsaker Consulting <hunsakerconsulting@gmail.com>"
 #######################################################################
 ENV RUNNING_IN_DOCKER true
 #######################################################################
+# Make RUN commands use `bash --login`:
+SHELL ["/bin/bash", "--login", "-c"]
+
+
 # Add necessary rpm repositories
 RUN zypper ar -f -G  https://download.opensuse.org/repositories/openSUSE:Leap:15.2:Update/standard/openSUSE:Leap:15.2:Update.repo
 RUN zypper ar -f -G  http://download.opensuse.org/repositories/devel:/tools:/building/openSUSE_Leap_15.2/devel:tools:building.repo
@@ -27,15 +31,11 @@ RUN zypper refresh && zypper -n install -t pattern \
     devel_qt5 \
     devel_rpm_build console
 RUN ldconfig -v
-#######################################################################
-# Fetch and install library dependencies
 RUN zypper -n install \
-    R-base \
     ant \
     apache-pdfbox \
     autoconf \
     automake \
-    cairo-devel \
     cairo-devel \
     cairo-tools \
     cmake \
@@ -59,8 +59,6 @@ RUN zypper -n install \
     libpango-1_0-0 \
     libpangomm-2_44-1 \
     libpng16-devel \
-    libprotobuf26 \
-    libprotoc26 \
     libqt5-qtpaths \
     libqt5-qttools \
     libtensorflow2 \
@@ -95,12 +93,10 @@ RUN zypper -n install \
     pdfsandwich \
     pkg-config \
     poppler-tools \
-    protobuf \
     rclone \
     rpm \
     rpm-build \
     ruby \
-    rubygems \
     screen \
     texlive \
     tmux \
@@ -111,7 +107,6 @@ RUN zypper -n install \
     zlib-devel \
     zlibrary-devel \
     zsh 
-RUN ldconfig -v
 #######################################################################
 # Download GitHub Repos via HTTPS
     RUN git config --global url."https://github.com/".insteadOf git@github.com:
@@ -119,33 +114,35 @@ RUN ldconfig -v
 WORKDIR /home
     RUN git clone  --recurse-submodules https://github.com/DanBloomberg/leptonica.git
     RUN git clone --recurse-submodules https://github.com/ImageMagick/ImageMagick.git
-    RUN git clone --recurse-submodules https://github.com/liblouis/liblouis.git
-    RUN git clone --recurse-submodules https://github.com/liblouis/liblouisutdml.git
-    RUN git clone --recurse-submodules https://github.com/rbeezer/mathbook.git
-    RUN git clone --recurse-submodules  https://github.com/zorkow/speech-rule-engine.git
-    RUN git clone --recurse-submodules https://github.com/OCR-D/ocrd_all.git
+RUN wget https://www.lrde.epita.fr/dload/olena/2.1/olena-2.1.tar.gz
+RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py39_4.9.2-Linux-x86_64.sh -O miniconda.sh
+
 #######################################################################
-# Install LibLouis
-WORKDIR /home/liblouis
-    RUN sh ./autogen.sh
-    RUN ./configure --enable-ucs4 &&  make && make install 
-RUN ldconfig -v
+# Install Miniconda
+WORKDIR /home
+RUN bash miniconda.sh -b -p /usr
+# Set path to conda
+RUN conda init bash && conda update conda
+RUN conda init bash &&  update anaconda
+RUN conda init bash && conda update --all
+
 #######################################################################
-# Install Python Bindings for LibLouis
-WORKDIR /home/liblouis/python
-    RUN python3 setup.py install
-RUN ldconfig -v
+# Install dhSegment
+WORKDIR /home
+RUN git clone https://github.com/dhlab-epfl/dhSegment.git
+WORKDIR /home/dhSegment
+RUN conda init
+RUN conda create -n dh_segment python=3.6
+RUN source activate dh_segment
+RUN pip install git+https://github.com/dhlab-epfl/dhSegment
+RUN conda install tensorflow-gpu=1.13.1
 #######################################################################
-# Install LibLouisUTDML
-WORKDIR /home/liblouisutdml
-    RUN sh ./autogen.sh
-    RUN ./configure && make && make install  
-RUN ldconfig -v
-#######################################################################
-# Install java bindings for LibLouisUTDML (uses apache-ant)
-WORKDIR /home/liblouisutdml/java
-    RUN ant
-RUN ldconfig -v
+# Install Olena 2.1
+WORKDIR /home
+    RUN wget https://www.lrde.epita.fr/dload/olena/2.1/olena-2.1.tar.bz2
+RUN tar xjf olena-2.1.tar.bz2
+    WORKDIR /home/olena-2.1
+RUN ./configure && make && make install
 #######################################################################
 # Install Image-Magick 7
 WORKDIR /home/ImageMagick
@@ -158,88 +155,63 @@ WORKDIR /home/leptonica
     RUN ./configure && make && make install
 RUN ldconfig -v
 #######################################################################
-# Install Tesseract-OCR with TensorFlow
-WORKDIR /home/tesseract
-    RUN autoupdate --verbose
-    RUN sh ./autogen.sh
-#    RUN ./configure --with-tensorflow && make && make install 
-#    RUN ./configure && make && make install 
-RUN ldconfig -v
-#######################################################################
-# Install Language Files for Tesseract-OCR
-WORKDIR /usr/local/share/tessdata
-    RUN wget https://github.com/tesseract-ocr/tessdata_best/blob/master/eng.traineddata\?raw=true -O eng.traineddata
-    RUN wget https://github.com/tesseract-ocr/tessdata_best/blob/master/fra.traineddata\?raw=true -O fra.traineddata
-    RUN wget https://github.com/tesseract-ocr/tessdata_best/blob/master/deu.traineddata\?raw=true -O deu.traineddata
-    RUN wget https://github.com/tesseract-ocr/tessdata/raw/3.04.00/osd.traineddata -O osd.traineddata
-    RUN wget https://github.com/tesseract-ocr/tessdata/raw/3.04.00/equ.traineddata -O equ.traineddata
-RUN ldconfig -vhttps://repo.anaconda.com/miniconda/Miniconda3-py39_4.9.2-Linux-x86_64.sh
-#######################################################################
-# Set up MathJax and SRE
-WORKDIR /usr/src/app
-    RUN npm install --global npm@latest -y
-    RUN npm install --global mathjax-full -y
-    RUN npm install --global mathjax-node -y
-    RUN npm install --global mathjax-node-sre -y
-    RUN npm install --global speech-rule-engine -y
-    RUN npm install --global @daisy/ace -y
-RUN ldconfig -v
-#######################################################################
-# Set up Python for Image Extraction
+# Set up Python for Image Optimization
 WORKDIR /usr/src/app
     RUN zypper -n install python3-pip 
     RUN pip install --upgrade pip
-    RUN pip install wheel 
-    RUN pip install \
-        argparse \
-        argparse-utils \
-        calamari-ocr \
-        cython \
-        glob2 \
-        hocr-tools \
-        ipython \
-        jupyter \
-        lxml \
-        matplotlib \
-        numpy \
-        opencv-python \
-        pandas \
-        Pillow \
-        pretextbook \
-        pylouis \
-        pytesseract \
-        pytesstrain \
-        python-math \
-        scikit-image \
-        scikit-learn \
-        scikit-optimize \
-        scikit-plot \
-        Scipy \
-        scipy \
-        pdf2image \
-        pdftabextract \
-        PDFMiner \
-        PyPDF2 \
-        Tabula-py \
-        Slate \
-        PDFQuery \
-        xpdf \
-        camelot \
-        excalibur \
-        table-ocr \
-        wrapt --upgrade --ignore-installed wrapt \
-        tensorflow \
-		torch \
-        PyTorch \
-		torchvision \
-		torchaudio
+    RUN pip install wheel
+    RUN pip install setuptools
+    RUN pip install argparse 
+    RUN pip install argparse-utils 
+    RUN pip install calamari-ocr 
+    RUN pip install cython 
+    RUN pip install glob2 
+    RUN pip install hocr-tools
+    RUN pip install ipython 
+    RUN pip install jupyter 
+    RUN pip install lxml 
+    RUN pip install matplotlib 
+    RUN pip install numpy 
+    RUN pip install opencv-python 
+    RUN pip install pandas 
+    RUN pip install Pillow 
+    RUN pip install pretextbook 
+    RUN pip install pylouis 
+    RUN pip install pytesseract 
+    RUN pip install pytesstrain 
+    RUN pip install python-math 
+    RUN pip install scikit-image
+    RUN pip install scikit-learn
+    RUN pip install scikit-optimize 
+    RUN pip install scikit-plot 
+    RUN pip install Scipy 
+    RUN pip install scipy 
+    RUN pip install pdftabextract 
+    RUN pip install PDFMiner 
+    RUN pip install PyPDF2 
+    RUN pip install pdf2image 
+    RUN pip install Tabula-py 
+    RUN pip install PDFQuery
+    RUN pip install camelot-py
+    RUN pip install pyforest
+    RUN pip install excalibur-py 
+    RUN pip install table-ocr 
+    RUN pip install wrapt --upgrade --ignore-installed wrapt 
+    RUN pip install tensorflow 
+    RUN pip install torch 
+    RUN pip install	torchvision 
+    RUN pip install torchaudio
 #######################################################################
-# Clean up unneeded directories and files
-WORKDIR /home
-    RUN rm -rf /home/liblouis
-    RUN rm -rf /home/liblouisutdml
-    RUN rm -rf /home/ImageMagick
-#######################################################################
+
+RUN rm -rf /home/Leptonica
+RUN rm -rf /home/ImageMagick
+RUN rm -rf /home/Olena
+RUN rm -rf /home/miniconda
+RUN rm -rf /home/
+RUN rm -rf /home/
+RUN rm -rf /home/dhSegment
+RUN zypper clean
+
 WORKDIR /home
     RUN /bin/zsh
 ENTRYPOINT [ "/bin/zsh" ]
