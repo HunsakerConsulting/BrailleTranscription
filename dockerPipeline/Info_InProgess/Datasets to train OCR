@@ -1,0 +1,138 @@
+git clone --recurse-submodules https://github.com/aashrafh/Mozart.git
+git clone --recurse-submodules https://github.com/tensorflow/moonlight.git
+git clone --recurse-submodules https://github.com/kvklink/full-OMR-pipeline.git
+git clone --recurse-submodules https://github.com/AdelRizq/Orchestra.git
+git clone --recurse-submodules https://github.com/CogappLabs/nlsomr.git
+git clone --recurse-submodules https://github.com/apacha/MusicSymbolClassifier.git
+git clone --recurse-submodules https://github.com/apacha/MusicObjectDetection.git
+git clone --recurse-submodules https://github.com/apacha/MusicObjectDetector-TF.git
+git clone --recurse-submodules https://github.com/apacha/sheet-music-normalization.git
+git clone --recurse-submodules https://github.com/apacha/smude.git
+git clone --recurse-submodules https://github.com/apacha/rebook.git
+git clone --recurse-submodules https://github.com/apacha/MusicObjectDetector-TorchVision.git
+git clone --recurse-submodules https://github.com/apacha/staff-lines-removal.git
+
+Tensorflow OMR pipeline
+git clone --recurse-submodules https://github.com/OMR-Research/tf-end-to-end.git
+PRIMUS dataset:
+wget https://grfia.dlsi.ua.es/primus/packages/primusCalvoRizoAppliedSciences2018.tgz
+Camera PRIMUS:
+wget https://grfia.dlsi.ua.es/primus/packages/CameraPrIMuS.tgz
+
+MUSIC DATASETS
+git clone --recurse-submodules https://github.com/apacha/CVC-MUSCIMA.git
+git clone --recurse-submodules https://github.com/apacha/OMR-Datasets.git
+git clone --recurse-submodules https://github.com/apacha/msmd.git
+git clone --recurse-submodules https://github.com/apacha/SEILSdataset.git
+git clone --recurse-submodules https://github.com/apacha/PrintedMusicSymbolsDataset.git
+git clone --recurse-submodules https://github.com/apacha/Homus.git
+git clone --recurse-submodules https://github.com/OMR-Research/muscima-pp.git
+wget https://repository.cloudlab.zhaw.ch/artifactory/deepscores/deep_scores_dense.zip
+wget https://repository.cloudlab.zhaw.ch/artifactory/deepscores/ds_extended.zip
+git clone --recurse-submodules https://github.com/eelcovdw/mono-MusicXML-dataset.git
+git clone --recurse-submodules https://github.com/SEILSdataset/SEILSdataset.git
+wget https://www.irisa.fr/intuidoc/data/database/choi_accidentals_dataset.zip
+git clone --recurse-submodules https://github.com/Audiveris/omr-dataset-tools.git
+
+
+
+XML quality control (linters)
+http://xmlsoft.org/xmllint.html
+https://relaxng.org/jclark/jing.html
+
+Table/Chart Datasets
+https://github.com/Academic-Hammer/SciTSR.git
+https://github.com/doc-analysis/TableBank.git
+
+
+Math Equation OCR
+wget http://www.iapr-tc11.org/dataset/CROHME/CROHME_full_v2.zip
+wget http://www.iapr-tc11.org/dataset/CROHME/CROHME_full_v1.zip
+
+wget https://www.kaggle.com/aidapearson/ocr-data/download
+wget https://www.kaggle.com/xainano/handwrittenmathsymbols/download
+wget https://www.kaggle.com/sagyamthapa/handwritten-math-symbols/download
+
+
+OCR data
+wget https://s3-us-west-2.amazonaws.com/uber-common-public/ubertext/Uber-Text.zip
+wget http://www.iapr-tc11.org/dataset/SVT/svt.zip
+wget http://www.iapr-tc11.org/dataset/MSRA-TD500/MSRA-TD500.zip
+MNIST
+wget http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz
+wget http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz
+wget http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz
+wget http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz
+
+
+http://www.iapr-tc11.org/mediawiki/index.php?title=ICDAR_2003_Robust_Reading_Competitions
+
+http://www.iapr-tc11.org/mediawiki/index.php?title=ICDAR_2005_Robust_Reading_Competitions
+
+https://rrc.cvc.uab.es/?ch=9&com=downloads
+
+https://rrc.cvc.uab.es/?ch=1&com=downloads
+
+
+wget https://ndownloader.figshare.com/files/21084540
+wget https://ndownloader.figshare.com/files/21084555
+
+wget https://drive.google.com/drive/folders/1_GYPY5UkUy7HIcR0zq3ZCFgeZN7BAfm_?usp=sharing
+
+wget https://bl.iro.bl.uk/downloads/37e0da7b-760a-480a-a4f1-fc68914831e5?locale=en
+
+wget https://bl.iro.bl.uk/downloads/d9b50283-33cc-412f-86e5-b4fb4cfe7ce5?locale=en
+
+wget https://bl.iro.bl.uk/downloads/af437c6d-c7fc-46a2-9f71-8f98d9219c5a?locale=en
+
+wget https://zenodo.org/record/3743394/files/replication.zip?download=1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BRAILLE OCR
+http://www.iapr-tc11.org/dataset/Braile_ShirazUniv/Braille
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+XML linters
+
+
+http://lstm.seas.harvard.edu/latex/data/
+
+https://rrc.cvc.uab.es?

@@ -1,0 +1,59 @@
+Math Equation OCR
+
+git clone --recurse-submodules https://github.com/UW-COSMOS/Cosmos.git
+
+
+git clone --recurse-submodules https://github.com/falvaro/seshat.git
+
+git clone --recurse-submodules https://github.com/falvaro/pme_parser.git
+
+git clone --recurse-submodules https://github.com/salvacarrion/yolo4math.git
+
+git clone --recurse-submodules https://github.com/zanibbi/SymbolScraper.git
+
+git clone --recurse-submodules https://github.com/zanibbi/ScanSSD.git
+
+git clone --recurse-submodules https://github.com/jungomi/math-formula-recognition.git
+
+git clone --recurse-submodules https://github.com/bilal2vec/math-recognition.git
+
+git clone --recurse-submodules https://github.com/bilal2vec/math-expression-recognition.git
+
+git clone --recurse-submodules https://github.com/lukas-blecher/LaTeX-OCR.git
+
+
+
+# Uses Tesseract
+git clone --recurse-submodules https://github.com/jrbruce86/MathFinder.git
+
+
+
+
+
+
+git clone --recurse-submodules https://github.com/varunkodathala/math-ocr.git
+
+git clone --recurse-submodules https://github.com/MkdmOmar/Mathematical-Symbol-Recognition.git
+
+git clone --recurse-submodules https://github.com/DPRL/ImageRecognizer.git
+
+git clone --recurse-submodules https://github.com/DPRL/MathSymbolRecognizer.git
+
+git clone --recurse-submodules https://github.com/DPRL/HMM_Math_Symbol_Classifier.git
+
+git clone --recurse-submodules https://github.com/briancherin/SimpleMathOCR.git
+
+git clone --recurse-submodules https://github.com/kasim95/OCR_Math_Expressions.git
+
+git clone --recurse-submodules https://github.com/MathLearningMachine/MLModel.git
+
+git clone --recurse-submodules https://github.com/appanp/ocr_en_formula.git
+
+git clone --recurse-submodules https://github.com/mahimna/MathCam.git
+
+git clone --recurse-submodules https://github.com/MouazSalah/Salvar-master.git
+
+git clone --recurse-submodules https://github.com/martius-lab/EQL_Tensorflow.git
+
+git clone --recurse-submodules https://github.com/martius-lab/EQL.git
+

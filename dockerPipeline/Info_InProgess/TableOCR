@@ -1,0 +1,18 @@
+Table Extraction OCR
+
+git clone --recurse-submodules https://github.com/cseas/ocr-table.git
+
+git clone --recurse-submodules https://github.com/ExtractTable/ExtractTable-py.git
+
+git clone --recurse-submodules https://github.com/brian-yang/table-parser-opencv.git
+
+git clone --recurse-submodules https://github.com/eihli/image-table-ocr.git
+git clone --recurse-submodules https://github.com/texttechnologylab/Multi-Type-TD-TSR.git
+
+git clone --recurse-submodules https://github.com/Psarpei/Multi-Type-TD-TSR.git
+git clone --recurse-submodules https://github.com/Psarpei/Recognition-of-logical-document-structures.git
+git clone --recurse-submodules
+git clone --recurse-submodules
+git clone --recurse-submodules
+git clone --recurse-submodules
+git clone --recurse-submodules
