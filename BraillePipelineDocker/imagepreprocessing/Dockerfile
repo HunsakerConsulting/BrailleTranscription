@@ -115,27 +115,6 @@ WORKDIR /home
     RUN git clone  --recurse-submodules https://github.com/DanBloomberg/leptonica.git
     RUN git clone --recurse-submodules https://github.com/ImageMagick/ImageMagick.git
 RUN wget https://www.lrde.epita.fr/dload/olena/2.1/olena-2.1.tar.gz
-RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py39_4.9.2-Linux-x86_64.sh -O miniconda.sh
-
-#######################################################################
-# Install Miniconda
-WORKDIR /home
-RUN bash miniconda.sh -b -p /usr
-# Set path to conda
-RUN conda init bash && conda update conda
-RUN conda init bash &&  update anaconda
-RUN conda init bash && conda update --all
-
-#######################################################################
-# Install dhSegment
-WORKDIR /home
-RUN git clone https://github.com/dhlab-epfl/dhSegment.git
-WORKDIR /home/dhSegment
-RUN conda init
-RUN conda create -n dh_segment python=3.6
-RUN source activate dh_segment
-RUN pip install git+https://github.com/dhlab-epfl/dhSegment
-RUN conda install tensorflow-gpu=1.13.1
 #######################################################################
 # Install Olena 2.1
 WORKDIR /home
@@ -202,7 +181,6 @@ WORKDIR /usr/src/app
     RUN pip install	torchvision 
     RUN pip install torchaudio
 #######################################################################
-
 RUN rm -rf /home/Leptonica
 RUN rm -rf /home/ImageMagick
 RUN rm -rf /home/Olena
@@ -211,7 +189,7 @@ RUN rm -rf /home/
 RUN rm -rf /home/
 RUN rm -rf /home/dhSegment
 RUN zypper clean
-
+#######################################################################
 WORKDIR /home
     RUN /bin/zsh
 ENTRYPOINT [ "/bin/zsh" ]

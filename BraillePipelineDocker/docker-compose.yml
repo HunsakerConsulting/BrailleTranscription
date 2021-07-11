@@ -1,269 +1,132 @@
 version: "3.9"
 
 services:
-  ##########
-  # PreProcessing
-  ##########
-  # PDF and TIFF Preprocessing
   preprocessing:
-    build: ./imagepreprocessing
-    image: hunsakerconsulting/imagepreprocessing:latest
+    stdin_open: "true"
+    tty: "true"
+    build:
+      context: ./imagepreprocessing
+      dockerfile: Dockerfile
+    image: hunsakerconsulting/imageprocessingpipeline
     container_name: preprocessing
-    #    environment:
-    #    ports:
-    links:
     volumes:
-      - "c:/users/ryan/WORKDIR:/data"
-  ##########
-  # Optical Character Recognition
-  ##########
-  # Text/Literary Material OCR
-  ##########
-  # OCR-D pipeline
+      - type: bind
+        source: ~/WORKDIR
+        target: /data
   ocrdpipeline:
-    build: ./ocrd-all-maximum-git
+    build:
+      context: ./ocrd-all-maximum-git
+      dockerfile: Dockerfile
     image: hunsakerconsulting/ocrd-all-maximum-git:latest
     container_name: ocrdpipeline
-    #    environment:
-    #    ports:
-    links:
     volumes:
-      - "c:/users/ryan/WORKDIR:/data"
-  ##########
-  # EasyOCR pipeline
+      - type: bind
+        source: ~/WORKDIR
+        target: /data
   easyocrpipeline:
-    build: ./easyocrpipeline
+    build:
+      context: ./easyocrpipeline
+      dockerfile: Dockerfile
     image: hunsakerconsulting/easyocrpipeline:latest
     container_name: easyocrpipeline
-    #    environment:
-    #    ports:
-    links:
     volumes:
-      - "c:/users/ryan/WORKDIR:/data"
-  ##########
-  # OCR4All pipeline
+      - type: bind
+        source: ~/WORKDIR
+        target: /data
   ocr4allpipeline:
-    build: ./ocr4allpipeline
-    image: hunsakerconsulting/ocr4allpipeline:latest
+    build:
+      context: ./ocr4allpipeline
+      dockerfile: Dockerfile
+    image: hunsakerconsulting/ocr4allpipeline
     container_name: ocr4allpipeline
-    environment:
-      OCR4ALL_URL: http://localhost:8080/ocr4all/
     ports:
       - "8080:8080"
-    links:
     volumes:
-      - "c:/users/ryan/WORKDIR:/data"
-      - "OCR_DATA_DIR:/var/ocr4all/data"
-      - "OCR_MODEL_DIR:/var/ocr4all/models/custom"
-  ##########
-  # OCULAR Historical Document OCR pipeline
+      - OCR_DATA_DIR:/var/ocr4all/data
+      - OCR_MODEL_DIR:/var/ocr4all/models/custom
   ocularpipeline:
-    build: ./ocularpipeline
-    image: hunsakerconsulting/ocularpipeline:latest
-    container_name: ocularpipeline
-    environment:
-    ports:
-    links:
+    build:
+      context: ./ocular
+      dockerfile: Dockerfile
+    image: hunsakerconsulting/ocularocrpipeline:latest
+    container_name: ocularocrpipeline
     volumes:
-      - "c:/users/ryan/WORKDIR:/data"
-  ##########
-  # pytesseract pipeline
-  pytesseractpipeline:
-    build: ./pytesseractpipeline
-    image: hunsakerconsulting/pytesseractpipeline:latest
-    container_name: pytesseractpipeline
-    #    environment:
-    #    ports:
-    links:
-    volumes:
-      - "c:/users/ryan/WORKDIR:/data"
-  ##########
-  # Math/Science/Technical Material OCR
-  mathpipeline:
-    build: ./mathpipeline
-    image: hunsakerconsulting/mathpipeline:latest
-    container_name: mathocrpipeline
-    #    environment:
-    #    ports:
-    links:
-    volumes:
-      - "c:/users/ryan/WORKDIR:/data"
-  ##########
-  # OCR Postprocessing/QualityControl
-  ##########
-  # QualityControl
-  ocrpostprocess:
-    build: ./ocrpostprocessing
-    image: hunsakerconsulting/ocrpostprocessing:latest
-    container_name: ocrpostprocessing
-    #    environment:
-    #    ports:
-    links:
-    volumes:
-      - "c:/users/ryan/WORKDIR:/data"
-  ##########
-  # Extract nontext from PDF Files
-  ##########
-  # Extract Images
-  dataextraction:
-    build: ./dataextraction
-    image: hunsakerconsulting/dataextraction:latest
-    container_name: dataextraction
-    #    environment:
-    #    ports:
-    links:
-    volumes:
-      - "c:/users/ryan/WORKDIR:/data"
-  ##########
-  # Generate Tactile Graphics
-  tactilegraphics:
-    build: ./tactilegraphics
-    image: hunsakerconsulting/tactilegraphics:latest
-    container_name: tactilegraphics
-    #    environment:
-    #    ports:
-    links:
-    volumes:
-      - "c:/users/ryan/WORKDIR:/data"
-  ##########
-  # Accessible Text Descriptions for Images/Figures after POET Guidelines
-  accessibledescriptions:
-    build: ./accessibledescriptions/
-    image: hunsakerconsulting/accessibledescriptions:latest
-    container_name: accessibledescriptions
-    #    environment:
-    #    ports:
-    links:
-    volumes:
-      - "c:/users/ryan/WORKDIR:/data"
-  ##########
-  # DAISY Text+Audio and Accessible ePUB3 pipelines
-  ##########
-  # LATeX, XML, NIMAS, dtbook, PreTeXt Formatting
-  textformatting:
-    build: ./textformatting
-    image: hunsakerconsulting/textformatting:latest
-    container_name: textformatting
-    #    environment:
-    #    ports:
-    links:
-    volumes:
-      - "c:/users/ryan/WORKDIR:/data"
-  ##########
-  # Daisy Pipeline2
+      - type: bind
+        source: ~/WORKDIR
+        target: /data
   daisypipeline2:
-    build: ./daisypipeline2
+    build:
+      context: ./daisypipeline2
+      dockerfile: Dockerfile
     image: hunsakerconsulting/daisypipeline2:latest
     container_name: daisypipeline2
     environment:
       PIPELINE2_WS_HOST: "0.0.0.0"
       PIPELINE2_WS_AUTHENTICATION: "false"
-    links:
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost || exit 1"]
+      interval: 5m
+      timeout: 30s
+      retries: 3
+      start_period: 40s
     volumes:
-      - "pipeline-data:/opt/daisy-pipeline2/data"
-      - "c:/users/ryan/WORKDIR:/data"
-  ##########
+      - pipeline-data:/opt/daisy-pipeline2/data
   webui:
-    #    build:
     image: daisyorg/pipeline-webui:latest
     environment:
       DAISY_PIPELINE2_URL: http://pipeline:8181/ws
     ports:
       - "9000:9000"
-    links:
     volumes:
-      - "webui-data:/opt/daisy-pipeline2-webui/data"
+      - webui-data:/opt/daisy-pipeline2-webui/data
     depends_on:
       daisypipeline2:
-        condition: service_healthy
-  ##########
-  # DAISY Text+Audio and Accessible ePUB3 Quality Control
-  ##########
-  xmlqualitycontrol:
-    build: ./xmlqualitycontrol
-    image: hunsakerconsulting/xmlqualitycontrol:latest
-    container_name: xmlqualitycontrol
-    #    environment:
-    #    ports:
-    links:
-    volumes:
-      - "c:/users/ryan/WORKDIR:/data"
-  ##########
-  # Optical Music Recognition
-  ##########
-  # OMR into musicXML
+        condition: service_started
   audiverisomr:
-    build: ./audiverisomr
-    image: hunsakerconsulting/audiveris:latest
+    build:
+      context: ./audiverisomr
+      dockerfile: Dockerfile
+    image: hunsakerconsulting/audiverisomr
     container_name: audiverisomr
-    #    environment:
-    #    ports:
-    links:
     volumes:
-      - "c:/users/ryan/WORKDIR:/data"
-  ##########
-  # musicXML formatting with Lilypond, musescore, and music21
-  musicformattingpipeline:
-    build: ./musicxmlformatting
-    image: hunsakerconsulting/musicxmlformatting:latest
-    container_name: musicxmlpipeline
-    #    environment:
-    #    ports:
-    links:
+      - type: bind
+        source: ~/WORKDIR
+        target: /data
+  Mozart:
+    build:
+      context: ./Mozart
+      dockerfile: Dockerfile
+    image: hunsakerconsulting/mozartomr
+    container_name: mozartomr
     volumes:
-      - "c:/users/ryan/WORKDIR:/data"
-  ##########
-  # Braille Transcription
-  ##########
-  # Braille Transcription (Literary and Technical UEB and Nemeth Code)
-  uebtranscriptionpipeline:
-    build: ./uebtranscriptionpipeline
-    image: hunsakerconsulting/uebtranscriptionpipeline:latest
-    container_name: uebtranscriptonpipeline
-    #    environment:
-    #    ports:
-    links:
+      - type: bind
+        source: ~/WORKDIR
+        target: /data
+  Moonlight:
+    build:
+      context: ./moonlight
+      dockerfile: Dockerfile
+    image: hunsakerconsulting/moonlightomr
+    container_name: moonlightomr
     volumes:
-      - "c:/users/ryan/WORKDIR:/data"
-  ##########
-  # Braille Transcription (MusicXML/Lilypond to BMML and Music Braille)
-  musicbrailletranscription:
-    build: ./musictransctiptionpipeline
-    image: hunsakerconsulting/musictransctiptionpipeline:latest
-    container_name: musictranscriptionpipeline
-    #    environment:
-    #    ports:
-    links:
+      - type: bind
+        source: ~/WORKDIR
+        target: /data
+  musicomrpipelines:
+    build:
+      context: ./musicpipeline
+      dockerfile: Dockerfile
+    image: hunsakerconsulting/musicpreprocessingpipeline
+    container_name: musicpreprocessing
     volumes:
-      - "c:/users/ryan/WORKDIR:/data"
-  ##########
-  # Braille Quality Control
-  ##########
-  braillequalitycontrol:
-    build: ./braillequalitycontrol
-    image: hunsakerconsulting/braillequalitycontrol:latest
-    container_name: braillequalitycontrol
-    #    environment:
-    #    ports:
-    links:
-    volumes:
-      - "c:/users/ryan/WORKDIR:/data"
-##########
-# Global Settings
+      - type: bind
+        source: ~/WORKDIR
+        target: /data
 volumes:
-  - "c:/users/ryan/WORKDIR:/data"
-  - pipeline-data:
-  - webui-data:
-environment:
-  PIPELINE2_WS_HOST: "0.0.0.0"
-  PIPELINE2_WS_AUTHENTICATION: "false"
-  DAISY_PIPELINE2_URL: http://pipeline:8181/ws
-  OCR4ALL_WS_HOST: "0.0.0.0"
-  OCR4ALL_WS_AUTHENTICATION: "false"
-  OCR4ALL_URL: http://localhost:8080/ocr4all/
-ports:
-  - "9000:9000"
-  - "8080:8080"
+  pipeline-data:
+  webui-data:
+  OCR_DATA_DIR:
+  OCR_MODEL_DIR:
 ##########
 # EOF
 ##########

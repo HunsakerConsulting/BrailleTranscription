@@ -47,7 +47,7 @@ WORKDIR /usr/src/app
     RUN git config --global url."https://github.com/".insteadOf git@github.com:
     RUN git config --global url."https://".insteadOf git://
 WORKDIR /home
-#Tensorflow Moonlight (Apoache Beam throughput)
+# Tensorflow Moonlight (Apoache Beam throughput)
 RUN git clone --recurse-submodules https://github.com/tensorflow/moonlight
     WORKDIR /home/moonlight
         # You may want to run this inside a virtualenv.
@@ -67,11 +67,10 @@ RUN git clone --recurse-submodules https://github.com/tensorflow/moonlight
     RUN pip install scipy
     RUN pip install tensorflow==1.15.4
     RUN pip install tensorflow-estimator==1.15.1
-#Builds dependencies and sets up the symlinks that we point to.
+# Builds dependencies and sets up the symlinks that we point to.
 RUN bazel build moonlight:omr
-
 
 WORKDIR //home/moonlight
     RUN /bin/zsh
-	CMD ["source ./env/bin/activate"]
+#	CMD ["source ./env/bin/activate"]
 ENTRYPOINT [ "/bin/zsh" ]

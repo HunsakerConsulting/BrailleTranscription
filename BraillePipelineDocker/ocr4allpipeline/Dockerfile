@@ -108,4 +108,6 @@ COPY larex.config /larex.config
 ENV LAREX_CONFIG=/larex.config
 
 # Start processes when container is started
-ENTRYPOINT [ "supervisord", "-c", "supervisord.conf"]
+#ENTRYPOINT [ "supervisord", "-c", "supervisord.conf"]
+RUN /bin/bash
+ENTRYPOINT ["/bin/bash"]

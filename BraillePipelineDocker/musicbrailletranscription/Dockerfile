@@ -112,10 +112,6 @@ RUN zypper -n install \
 RUN ldconfig -v
 RUN zypper inr
 RUN ldconfig
-WORKDIR /home
-RUN wget https://github.com/protocolbuffers/protobuf/releases/download/v3.17.3/protobuf-all-3.17.3.tar.gz
-RUN tar xvf protobuf-all-3.17.3.tar.gz -C /bin
-RUN ldconfig -v
 #######################################################################
 # Set up Python for Image Extraction
 WORKDIR /usr/src/app

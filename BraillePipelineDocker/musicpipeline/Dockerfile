@@ -219,5 +219,4 @@ WORKDIR /usr/src/app
 #######################################################################
 WORKDIR /home
     RUN /bin/zsh
-    RUN echo "Mozart Usage: python3 main.py <input directory path> <output directory path>"
 ENTRYPOINT [ "/bin/zsh" ]

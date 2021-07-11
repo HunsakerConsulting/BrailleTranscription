@@ -28,9 +28,82 @@ RUN zypper refresh && zypper -n install -t pattern \
     devel_rpm_build console
 RUN ldconfig -v
 #######################################################################
-
-
-
+# Fetch and install library dependencies
+RUN zypper -n install \
+    ant \
+    apache-pdfbox \
+    autoconf \
+    automake \
+    coreutils \
+    freetype-devel \
+    ghostscript \
+    git \
+    glibc-devel \
+    gradle \
+    java-11-openjdk-devel \
+    libboost_system1_66_0-32bit \
+    libcairo2 \
+    libgif7 \
+    libicu-devel \
+    liblcms2-devel \
+    libopencv4_5 \
+    libopenjp2-7 \
+    libopenjpeg1 \
+    libpango-1_0-0 \
+    libpangomm-2_44-1 \
+    libpng16-devel \
+    libqt5-qtpaths \
+    libqt5-qttools \
+    libtensorflow2 \
+    libtiff-devel \
+    libtiff5 \
+    libtool \
+    libwmf-devel \
+    libxml2-devel \
+    libxml2-tools \
+    libxslt-devel \
+    libxslt-tools\
+    libyaml-devel \
+    libGraphicsMagick-Q16-3 \
+    GraphicsMagick \
+    cuneiform \
+    libcuneiform1 \
+    maven \
+    maven-assembly-plugin \
+    maven-lib \
+    maven-local \
+    maven-parent \
+    maven-plugins-pom \
+    mozilla-nss-devel \
+    nodejs14 \
+    npm14 \
+    opencv \
+    openjpeg2-devel \
+    pandoc \
+    pango-devel \
+    perl \
+    pdftk \
+    pdfsandwich \
+    pkg-config \
+    poppler-tools \
+    protobuf \
+    rclone \
+    rpm \
+    rpm-build \
+    ruby \
+    rubygems \
+    screen \
+    texlive \
+    tmux \
+    tree \
+    unpaper \
+    vim \
+    wget \
+    zlib-devel \
+    zlibrary-devel \
+    zsh 
+RUN ldconfig -v
+#######################################################################
 
 #######################################################################
 WORKDIR /home
