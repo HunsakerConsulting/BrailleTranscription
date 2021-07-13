@@ -33,17 +33,17 @@ services:
       - type: bind
         source: ~/WORKDIR
         target: /data
-  ocr4allpipeline:
-    build:
-      context: ./ocr4allpipeline
-      dockerfile: Dockerfile
-    image: hunsakerconsulting/ocr4allpipeline
-    container_name: ocr4allpipeline
-    ports:
-      - "8080:8080"
-    volumes:
-      - OCR_DATA_DIR:/var/ocr4all/data
-      - OCR_MODEL_DIR:/var/ocr4all/models/custom
+#  ocr4allpipeline:
+#    build:
+#      context: ./ocr4allpipeline
+#      dockerfile: Dockerfile
+#    image: hunsakerconsulting/ocr4allpipeline
+#    container_name: ocr4allpipeline
+#    ports:
+#      - "8080:8080"
+#    volumes:
+#      - OCR_DATA_DIR:/var/ocr4all/data
+#      - OCR_MODEL_DIR:/var/ocr4all/models/custom
   ocularpipeline:
     build:
       context: ./ocular
@@ -71,17 +71,17 @@ services:
       start_period: 40s
     volumes:
       - pipeline-data:/opt/daisy-pipeline2/data
-  webui:
-    image: daisyorg/pipeline-webui:latest
-    environment:
-      DAISY_PIPELINE2_URL: http://pipeline:8181/ws
-    ports:
-      - "9000:9000"
-    volumes:
-      - webui-data:/opt/daisy-pipeline2-webui/data
-    depends_on:
-      daisypipeline2:
-        condition: service_started
+#  webui:
+#    image: daisyorg/pipeline-webui
+#    environment:
+#      DAISY_PIPELINE2_URL: http://pipeline:8181/ws
+#    ports:
+#      - "9000:9000"
+#    volumes:
+#      - webui-data:/opt/daisy-pipeline2-webui/data
+#    depends_on:
+#      daisypipeline2:
+#        condition: service_started
   audiverisomr:
     build:
       context: ./audiverisomr
@@ -112,6 +112,16 @@ services:
       - type: bind
         source: ~/WORKDIR
         target: /data
+  Mozart:
+    build:
+      context: ./mathpipeline
+      dockerfile: Dockerfile
+    image: hunsakerconsulting/mathocrpipeline
+    container_name: mathocrpipeline
+    volumes:
+      - type: bind
+        source: ~/WORKDIR
+        target: /data
   musicomrpipelines:
     build:
       context: ./musicpipeline
@@ -122,11 +132,21 @@ services:
       - type: bind
         source: ~/WORKDIR
         target: /data
+  xmlqualitycontrol:
+    build:
+      context: ./xmlqualitycontrol
+      dockerfile: Dockerfile
+    image: hunsakerconsulting/xmlqualitycontrol
+    container_name: xmlqualitycontrol
+    volumes:
+      - type: bind
+        source: ~/WORKDIR
+        target: /data
 volumes:
   pipeline-data:
-  webui-data:
-  OCR_DATA_DIR:
-  OCR_MODEL_DIR:
+#  webui-data:
+#  OCR_DATA_DIR:
+#  OCR_MODEL_DIR:
 ##########
 # EOF
 ##########

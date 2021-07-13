@@ -101,6 +101,7 @@ RUN zypper -n install \
     unpaper \
     vim \
     wget \
+    unzip \
     zlib-devel \
     zlibrary-devel \
     zsh 
@@ -112,33 +113,27 @@ WORKDIR /usr/src/app
     RUN pip install --upgrade pip
     RUN pip install wheel
     RUN pip install setuptools
-    RUN pip install \
-        yamllint \
-        pylint \
-        pymarkdownlint \
-        jsonlint \
-        pyjsonlint \
-        apache-beam-io-extras \
-        metsrw \
-        pymets \
-        pypandoc \
-        docbook2epub \
-        py-asciimath \
-        dblatex \
-        pretextbook \
-        latex2mathml \
-        py-mathjax \
-        epubcheck \
-        pylintxml   
+    RUN pip install yamllint 
+    RUN pip install pylint 
+    RUN pip install pymarkdownlint 
+    RUN pip install jsonlint 
+    RUN pip install pytest-jsonlint 
+    RUN pip install metsrw 
+    RUN pip install pymets 
+    RUN pip install pypandoc 
+    RUN pip install py-asciimath 
+    RUN pip install pretextbook 
+    RUN pip install latex2mathml 
+    RUN pip install epubcheck   
 #######################################################################
 WORKDIR /home
-RUN git clone --recurse-submodules https://github.com/w3c/epubcheck.git
-WORKDIR /home/epubcheck
-RUN mvn clean install
-#######################################################################
-RUN npm install -g \
-    @daisy/ace \
-    markdownlint-cli 
+RUN wget https://github.com/w3c/epubcheck/releases/download/v4.2.6/epubcheck-4.2.6.zip
+RUN unzip epubcheck-4.2.6 -d /usr/bin
+RUN ldconfig
+###############################################
+RUN npm install -g @daisy/ace@next --unsafe-perm=true --allow-root
+RUN npm install markdownlint-cli -g 
+RUN ldconfig
 #######################################################################
 WORKDIR /home
     RUN /bin/zsh

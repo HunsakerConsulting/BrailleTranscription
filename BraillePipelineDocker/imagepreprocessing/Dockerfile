@@ -114,7 +114,6 @@ RUN zypper -n install \
 WORKDIR /home
     RUN git clone  --recurse-submodules https://github.com/DanBloomberg/leptonica.git
     RUN git clone --recurse-submodules https://github.com/ImageMagick/ImageMagick.git
-RUN wget https://www.lrde.epita.fr/dload/olena/2.1/olena-2.1.tar.gz
 #######################################################################
 # Install Olena 2.1
 WORKDIR /home
@@ -184,12 +183,7 @@ WORKDIR /usr/src/app
 RUN rm -rf /home/Leptonica
 RUN rm -rf /home/ImageMagick
 RUN rm -rf /home/Olena
-RUN rm -rf /home/miniconda
-RUN rm -rf /home/
-RUN rm -rf /home/
-RUN rm -rf /home/dhSegment
 RUN zypper clean
 #######################################################################
 WORKDIR /home
-    RUN /bin/zsh
 ENTRYPOINT [ "/bin/zsh" ]

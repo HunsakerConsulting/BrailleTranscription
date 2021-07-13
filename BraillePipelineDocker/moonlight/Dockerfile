@@ -70,7 +70,6 @@ RUN git clone --recurse-submodules https://github.com/tensorflow/moonlight
 # Builds dependencies and sets up the symlinks that we point to.
 RUN bazel build moonlight:omr
 
-WORKDIR //home/moonlight
+WORKDIR /home/moonlight
     RUN /bin/zsh
-#	CMD ["source ./env/bin/activate"]
 ENTRYPOINT [ "/bin/zsh" ]

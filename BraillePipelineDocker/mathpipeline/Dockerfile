@@ -204,36 +204,36 @@ RUN export TESSDATA_PREFIX=/usr/local/share >> /.bashrc
 RUN export SCROLLVIEW_PATH=/usr/local/share/scrollview  >> /.bashrc
 RUN exec bash
 #######################################################################
-WORKDIR /home
-RUN git clone --recurse-submodules https://github.com/hunsakerconsulting/MathFinder.git
-WORKDIR /home/MathFinder
-RUN autoreconf -vfi
-RUN ./configure && make sudo make install
+#WORKDIR /home
+#RUN git clone --recurse-submodules https://github.com/hunsakerconsulting/MathFinder.git
+#WORKDIR /home/MathFinder
+#RUN autoreconf -vfi
+#RUN ./configure && make && make install
 #######################################################################
 #Misc Uninstalled Math OCR Tools
-RUN git clone --recurse-submodules https://github.com/varunkodathala/math-ocr.git
-RUN git clone --recurse-submodules https://github.com/MkdmOmar/Mathematical-Symbol-Recognition.git
+RUN git clone --recurse-submodules https://github.com/appanp/ocr_en_formula.git
+RUN git clone --recurse-submodules https://github.com/bilal2vec/math-expression-recognition.git
+RUN git clone --recurse-submodules https://github.com/bilal2vec/math-recognition.git
+RUN git clone --recurse-submodules https://github.com/briancherin/SimpleMathOCR.git
+RUN git clone --recurse-submodules https://github.com/DPRL/HMM_Math_Symbol_Classifier.git
 RUN git clone --recurse-submodules https://github.com/DPRL/ImageRecognizer.git
 RUN git clone --recurse-submodules https://github.com/DPRL/MathSymbolRecognizer.git
-RUN git clone --recurse-submodules https://github.com/DPRL/HMM_Math_Symbol_Classifier.git
-RUN git clone --recurse-submodules https://github.com/briancherin/SimpleMathOCR.git
-RUN git clone --recurse-submodules https://github.com/kasim95/OCR_Math_Expressions.git
-RUN git clone --recurse-submodules https://github.com/MathLearningMachine/MLModel.git
-RUN git clone --recurse-submodules https://github.com/appanp/ocr_en_formula.git
-RUN git clone --recurse-submodules https://github.com/mahimna/MathCam.git
-RUN git clone --recurse-submodules https://github.com/MouazSalah/Salvar-master.git
-RUN git clone --recurse-submodules https://github.com/martius-lab/EQL_Tensorflow.git
-RUN git clone --recurse-submodules https://github.com/martius-lab/EQL.git
-RUN git clone --recurse-submodules https://github.com/UW-COSMOS/Cosmos.git
-RUN git clone --recurse-submodules https://github.com/falvaro/seshat.git
 RUN git clone --recurse-submodules https://github.com/falvaro/pme_parser.git
-RUN git clone --recurse-submodules https://github.com/salvacarrion/yolo4math.git
-RUN git clone --recurse-submodules https://github.com/zanibbi/SymbolScraper.git
-RUN git clone --recurse-submodules https://github.com/zanibbi/ScanSSD.git
+RUN git clone --recurse-submodules https://github.com/falvaro/seshat.git
 RUN git clone --recurse-submodules https://github.com/jungomi/math-formula-recognition.git
-RUN git clone --recurse-submodules https://github.com/bilal2vec/math-recognition.git
-RUN git clone --recurse-submodules https://github.com/bilal2vec/math-expression-recognition.git
+RUN git clone --recurse-submodules https://github.com/kasim95/OCR_Math_Expressions.git
 RUN git clone --recurse-submodules https://github.com/lukas-blecher/LaTeX-OCR.git
+RUN git clone --recurse-submodules https://github.com/mahimna/MathCam.git
+RUN git clone --recurse-submodules https://github.com/martius-lab/EQL.git
+RUN git clone --recurse-submodules https://github.com/martius-lab/EQL_Tensorflow.git
+RUN git clone --recurse-submodules https://github.com/MathLearningMachine/MLModel.git
+RUN git clone --recurse-submodules https://github.com/MkdmOmar/Mathematical-Symbol-Recognition.git
+RUN git clone --recurse-submodules https://github.com/MouazSalah/Salvar-master.git
+RUN git clone --recurse-submodules https://github.com/salvacarrion/yolo4math.git
+RUN git clone --recurse-submodules https://github.com/UW-COSMOS/Cosmos.git
+RUN git clone --recurse-submodules https://github.com/varunkodathala/math-ocr.git
+RUN git clone --recurse-submodules https://github.com/zanibbi/ScanSSD.git
+RUN git clone --recurse-submodules https://github.com/zanibbi/SymbolScraper.git
 #######################################################################
 # Table OCR Tools (uninstalled)
 RUN git clone --recurse-submodules https://github.com/cseas/ocr-table.git
@@ -241,7 +241,7 @@ RUN git clone --recurse-submodules https://github.com/ExtractTable/ExtractTable-
 RUN git clone --recurse-submodules https://github.com/brian-yang/table-parser-opencv.git
 RUN git clone --recurse-submodules https://github.com/eihli/image-table-ocr.git
 RUN git clone --recurse-submodules https://github.com/texttechnologylab/Multi-Type-TD-TSR.git
-RUN git clone --recurse-submodules https://github.com/Psarpei/Multi-Type-TD-TSR.git
+#RUN git clone --recurse-submodules https://github.com/Psarpei/Multi-Type-TD-TSR.git
 RUN git clone --recurse-submodules https://github.com/Psarpei/Recognition-of-logical-document-structures.git
 #######################################################################
 WORKDIR /home
